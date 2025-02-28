@@ -40,6 +40,11 @@ npm start
 
 This will start the development server and open the application in your default web browser.
 
+The application will be available at:
+
+- Loopback: [http://localhost:9000/](http://localhost:9000/)
+- On Your Network (IPv4): [http://172.18.0.2:9000/](http://172.18.0.2:9000/)
+
 ## Building the Application
 
 To create a production build of the application, use the following command:
@@ -49,6 +54,34 @@ npm run build
 ```
 
 This will generate the optimized files in the `dist` directory.
+
+## Debugging Errors
+
+If you encounter errors while running the application, you can check the log files for more details. For example, if you see an error like `npm error signal SIGTERM`, you can find the complete log in the following location:
+
+```
+/root/.npm/_logs/<timestamp>-debug-0.log
+```
+
+Replace `<timestamp>` with the actual timestamp from the error message.
+
+To view the log file, you can use the following command:
+
+```sh
+cat /root/.npm/_logs/<timestamp>-debug-0.log
+```
+
+This will display the contents of the log file, which can help you diagnose and fix the issue.
+
+## Sprawdzanie mapowania portów
+
+Aby sprawdzić mapowanie portów w Docker Compose, użyj poniższego polecenia:
+
+```sh
+docker-compose ps
+```
+
+To polecenie pokaże listę uruchomionych usług i ich mapowania portów.
 
 ## License
 

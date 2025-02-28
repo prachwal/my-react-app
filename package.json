@@ -7,7 +7,9 @@
     "build": "webpack --mode production",
     "clean": "rimraf dist",
     "rebuild": "npm run clean && npm run build",
-    "test": "jest"
+    "test": "jest",
+    "docker:build": "docker build -t my-react-app .",
+    "docker:start": "docker-compose up --build"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
