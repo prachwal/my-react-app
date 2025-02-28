@@ -2,7 +2,6 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { increment, decrement } from "../store/counterSlice";
-
 import "../styles/Counter.css";
 
 const Counter: React.FC = () => {
