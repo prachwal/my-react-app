@@ -1,12 +1,12 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
-import { increment, decrement } from "../features/exampleSlice";
+import { increment, decrement } from "../store/counterSlice";
 
-import "./Counter.css";
+import "../styles/Counter.css";
 
 const Counter: React.FC = () => {
-  const count = useSelector((state: RootState) => state.example.value);
+  const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch();
 
   return (
