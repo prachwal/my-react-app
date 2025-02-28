@@ -50,7 +50,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./public/index.html",
+      template: "./public/index.html", // Upewnij się, że ścieżka do szablonu jest poprawna
     }),
   ],
   devServer: {
