@@ -1,0 +1,27 @@
+.historical-rates-table {
+  width: 100%;
+  max-width: 33%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+}
+
+.historical-rates-table th,
+.historical-rates-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.historical-rates-table th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.historical-rates-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.historical-rates-table tr:hover {
+  background-color: #ddd;
+}

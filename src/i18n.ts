@@ -1,8 +1,7 @@
-import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageManager from "./utils/LanguageManager";
 
-import { ResourceLanguage } from "i18next";
+import i18n, { ResourceLanguage } from "i18next";
 
 interface TranslationResource extends ResourceLanguage {
   name: string;
@@ -17,6 +16,9 @@ interface TranslationResource extends ResourceLanguage {
     Code: string;
     "Exchange Rate": string;
     "Choose language": string;
+    Chart: string;
+    Table: string;
+    Date: string;
   };
 }
 
@@ -34,6 +36,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Code",
       "Exchange Rate": "Exchange Rate",
       "Choose language": "Choose language",
+      Chart: "Chart",
+      Table: "Table",
+      Date: "Date",
     },
   },
   pl: {
@@ -49,6 +54,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Kod",
       "Exchange Rate": "Kurs wymiany",
       "Choose language": "Wybierz język",
+      Chart: "Wykres",
+      Table: "Tabela",
+      Date: "Data",
     },
   },
   es: {
@@ -64,6 +72,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Código",
       "Exchange Rate": "Tipo de cambio",
       "Choose language": "Elige idioma",
+      Chart: "Gráfico",
+      Table: "Tabla",
+      Date: "Fecha",
     },
   },
   fr: {
@@ -79,6 +90,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Code",
       "Exchange Rate": "Taux de change",
       "Choose language": "Choisir la langue",
+      Chart: "Graphique",
+      Table: "Tableau",
+      Date: "Date",
     },
   },
   de: {
@@ -94,6 +108,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Code",
       "Exchange Rate": "Wechselkurs",
       "Choose language": "Sprache wählen",
+      Chart: "Diagramm",
+      Table: "Tabelle",
+      Date: "Datum",
     },
   },
   it: {
@@ -109,6 +126,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Codice",
       "Exchange Rate": "Tasso di cambio",
       "Choose language": "Scegli la lingua",
+      Chart: "Grafico",
+      Table: "Tabella",
+      Date: "Data",
     },
   },
   ru: {
@@ -124,6 +144,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Код",
       "Exchange Rate": "Обменный курс",
       "Choose language": "Выберите язык",
+      Chart: "График",
+      Table: "Таблица",
+      Date: "Дата",
     },
   },
   zh: {
@@ -139,6 +162,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "代码",
       "Exchange Rate": "汇率",
       "Choose language": "选择语言",
+      Chart: "图表",
+      Table: "表格",
+      Date: "日期",
     },
   },
   ja: {
@@ -154,6 +180,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "コード",
       "Exchange Rate": "為替レート",
       "Choose language": "言語を選択",
+      Chart: "チャート",
+      Table: "テーブル",
+      Date: "日付",
     },
   },
   ko: {
@@ -169,6 +198,9 @@ export const resources: Record<string, TranslationResource> = {
       Code: "코드",
       "Exchange Rate": "환율",
       "Choose language": "언어 선택",
+      Chart: "차트",
+      Table: "테이블",
+      Date: "날짜",
     },
   },
 };

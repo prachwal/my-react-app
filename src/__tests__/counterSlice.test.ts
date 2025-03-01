@@ -2,7 +2,7 @@ import counterReducer, {
   increment,
   decrement,
   reset,
-} from "../components/Counter/counterSlice";
+} from "../store/counterSlice";
 
 describe("counter reducer", () => {
   const initialState = { value: 0 };

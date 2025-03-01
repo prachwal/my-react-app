@@ -1,5 +1,10 @@
+.nbp-table-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 .nbp-table {
-  width: 100%;
+  width: 50%;
   border-collapse: collapse;
 }
 
@@ -37,4 +42,13 @@
 
 .pagination-controls span {
   margin: 0 10px;
+}
+
+.historical-rates-container {
+  width: 45%;
+}
+
+.historical-rates-table-container {
+  max-height: 400px;
+  overflow-y: auto;
 }
