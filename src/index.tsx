@@ -12,8 +12,8 @@ if (container) {
       <Provider store={store}>
         <App />
       </Provider>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 } else {
-  console.error("Root container not found");
+  throw new Error("Root container not found");
 }

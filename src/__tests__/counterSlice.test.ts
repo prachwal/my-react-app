@@ -9,7 +9,7 @@ describe("counter reducer", () => {
 
   it("should handle initial state", () => {
     expect(counterReducer(undefined, { type: "unknown" })).toEqual(
-      initialState
+      initialState,
     );
   });
 
