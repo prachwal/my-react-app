@@ -1,8 +1,11 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import App from "./components/App";
+import App from "./App";
 import store from "./store";
+import "./i18n"; // Importuj konfigurację i18n
+import "./styles/App.css"; // Importuj style
+import "./styles/LanguageSwitcher.css"; // Importuj style dla LanguageSwitcher
 
 const container = document.getElementById("root");
 if (container) {
