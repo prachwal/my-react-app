@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import LanguageManager from "./utils/LanguageManager";
 
 import { ResourceLanguage } from "i18next";
 
@@ -172,9 +173,11 @@ export const resources: Record<string, TranslationResource> = {
   },
 };
 
+const savedLanguage = LanguageManager.getDefaultLanguage();
+
 i18n.use(initReactI18next).init({
   resources,
-  lng: "en", // domyślny język
+  lng: savedLanguage, // Użyj języka zapisanego w localStorage jako domyślnego języka
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,

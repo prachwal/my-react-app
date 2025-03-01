@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { AppDispatch } from "../store";
-import { RootState } from "../store";
-import { fetchExchangeRates } from "../store/nbpSlice";
-import DynamicTable from "./DynamicTable";
-import "../styles/NbpTable.css";
+import { AppDispatch } from "../../store";
+import { RootState } from "../../store";
+import { fetchExchangeRates } from "./nbpSlice";
+import DynamicTable from "../DynamicTable";
+import "./NbpTable.css";
 
 const NbpTable: React.FC = () => {
-  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { exchangeRates, loading, error } = useSelector(
     (state: RootState) => state.nbp,
@@ -21,7 +19,7 @@ const NbpTable: React.FC = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <div>{t("Loading")}</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
@@ -48,13 +46,13 @@ const NbpTable: React.FC = () => {
       />
       <div className="pagination-controls">
         <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-          {t("Previous")}
+          Previous
         </button>
         <span>
-          {t("Page")} {currentPage} {t("of")} {totalPages}
+          Page {currentPage} of {totalPages}
         </span>
         <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          {t("Next")}
+          Next
         </button>
       </div>
     </div>

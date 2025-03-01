@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import "./DynamicTable.css";
 
 interface DynamicTableProps {
   data: any[];

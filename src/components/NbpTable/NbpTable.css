@@ -22,21 +22,6 @@
   font-weight: bold;
 }
 
-.nbp-table th:nth-child(1),
-.nbp-table td:nth-child(1) {
-  width: 60%;
-}
-
-.nbp-table th:nth-child(2),
-.nbp-table td:nth-child(2) {
-  width: 10%;
-}
-
-.nbp-table th:nth-child(3),
-.nbp-table td:nth-child(3) {
-  width: auto;
-}
-
 .pagination-controls {
   display: flex;
   justify-content: center;

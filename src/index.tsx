@@ -5,7 +5,7 @@ import App from "./App";
 import store from "./store";
 import "./i18n"; // Importuj konfigurację i18n
 import "./styles/App.css"; // Importuj style
-import "./styles/LanguageSwitcher.css"; // Importuj style dla LanguageSwitcher
+import "./components/LanguageSwitcher/LanguageSwitcher.css"; // Importuj style dla LanguageSwitcher
 
 const container = document.getElementById("root");
 if (container) {

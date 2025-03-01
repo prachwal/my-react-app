@@ -1,6 +1,6 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import counterReducer from "./counterSlice";
-import nbpReducer from "./nbpSlice";
+import counterReducer from "../components/Counter/counterSlice";
+import nbpReducer from "../components/NbpTable/nbpSlice";
 
 const rootReducer = combineReducers({
   counter: counterReducer,
