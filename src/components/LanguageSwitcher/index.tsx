@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { resources } from "../../i18n";
-import LanguageManager from "../../utils/LanguageManager";
-import "./LanguageSwitcher.css";
+import { resources } from "../../utils/i18n";
+import LanguageManager from "../../hooks/LanguageManager";
+import "./style.css";
 
 const LanguageSwitcher: React.FC = () => {
   const { t, i18n } = useTranslation();

@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch } from "../../store";
-import { RootState } from "../../store";
+import { AppDispatch } from "../../app/store";
+import { RootState } from "../../app/store";
 import { fetchExchangeRates } from "../../store/nbpSlice";
 import DynamicTable from "../DynamicTable";
 import HistoricalRatesChart from "../HistoricalRatesChart";
 import HistoricalRatesTable from "../HistoricalRatesTable";
-import DaysSelector from "../DaysSelector";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useTranslation } from "react-i18next";
 import "react-tabs/style/react-tabs.css";
-import "./NbpTable.css";
+import "./style.css";
 
-const NbpTable: React.FC = () => {
+interface NbpTableProps {
+  days: number;
+}
+
+const NbpTable: React.FC<NbpTableProps> = ({ days }) => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { exchangeRates, loading, error } = useSelector(
@@ -20,7 +23,6 @@ const NbpTable: React.FC = () => {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null);
-  const [days, setDays] = useState(10);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -53,7 +55,6 @@ const NbpTable: React.FC = () => {
 
   return (
     <div>
-      <DaysSelector days={days} onDaysChange={setDays} />
       <div className="nbp-table-container">
         <div className="nbp-table">
           <DynamicTable
@@ -63,26 +64,10 @@ const NbpTable: React.FC = () => {
             currentPage={currentPage}
             onRowClick={handleRowClick}
             selectedCurrency={selectedCurrency} // Przekaż wybraną walutę do DynamicTable
+            totalPages={totalPages}
+            handlePreviousPage={handlePreviousPage}
+            handleNextPage={handleNextPage}
           />
-          <div className="pagination-controls">
-            <button
-              type="button"
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-            >
-              {t("Previous")}
-            </button>
-            <span>
-              {t("Page")} {currentPage} {t("of")} {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-            >
-              {t("Next")}
-            </button>
-          </div>
         </div>
         {selectedCurrency && (
           <div className="historical-rates-container">

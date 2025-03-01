@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import "./DaysSelector.css";
+import "./style.css";
 
 interface DaysSelectorProps {
   days: number;

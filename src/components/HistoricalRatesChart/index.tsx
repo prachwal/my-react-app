@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../../store";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { AppDispatch, RootState } from "../../app/store";
 import { fetchHistoricalRates } from "../../store/historicalSlice";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,7 +14,7 @@ import {
   Legend,
 } from "recharts";
 import { format } from "d3-format";
-import "./HistoricalRatesChart.css";
+import "./style.css";
 
 interface HistoricalRatesChartProps {
   currencyCode: string;
@@ -33,6 +33,7 @@ const HistoricalRatesChart: React.FC<HistoricalRatesChartProps> = ({
       loading: state.historicalRates.loading,
       error: state.historicalRates.error,
     }),
+    shallowEqual,
   );
 
   useEffect(() => {

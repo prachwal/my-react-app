@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import "./DynamicTable.css";
+import "./style.css";
 
 interface DynamicTableProps {
   data: { [key: string]: string | number }[];
@@ -9,6 +9,9 @@ interface DynamicTableProps {
   currentPage: number;
   onRowClick?: (currencyCode: string) => void;
   selectedCurrency?: string | null; // Dodaj właściwość selectedCurrency
+  totalPages: number;
+  handlePreviousPage: () => void;
+  handleNextPage: () => void;
 }
 
 const DynamicTable: React.FC<DynamicTableProps> = ({
@@ -18,6 +21,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   currentPage,
   onRowClick,
   selectedCurrency,
+  totalPages,
+  handlePreviousPage,
+  handleNextPage,
 }) => {
   const { t } = useTranslation();
 
@@ -57,6 +63,31 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           </tr>
         ))}
       </tbody>
+      <tfoot>
+        <tr>
+          <td colSpan={headers.length}>
+            <div className="pagination-controls">
+              <button
+                type="button"
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+              >
+                {t("Previous")}
+              </button>
+              <span>
+                {t("Page")} {currentPage} {t("of")} {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                {t("Next")}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
     </table>
   );
 };

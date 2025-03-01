@@ -1,5 +1,5 @@
 import { initReactI18next } from "react-i18next";
-import LanguageManager from "./utils/LanguageManager";
+import LanguageManager from "../hooks/LanguageManager";
 
 import i18n, { ResourceLanguage } from "i18next";
 
@@ -16,9 +16,11 @@ interface TranslationResource extends ResourceLanguage {
     Code: string;
     "Exchange Rate": string;
     "Choose language": string;
+    "Choose days": string;
     Chart: string;
     Table: string;
     Date: string;
+    "My React App": string;
   };
 }
 
@@ -36,9 +38,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Code",
       "Exchange Rate": "Exchange Rate",
       "Choose language": "Choose language",
+      "Choose days": "Choose days",
       Chart: "Chart",
       Table: "Table",
       Date: "Date",
+      "My React App": "My React App",
     },
   },
   pl: {
@@ -54,9 +58,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Kod",
       "Exchange Rate": "Kurs wymiany",
       "Choose language": "Wybierz język",
+      "Choose days": "Wybierz dni",
       Chart: "Wykres",
       Table: "Tabela",
       Date: "Data",
+      "My React App": "Moja aplikacja React",
     },
   },
   es: {
@@ -72,9 +78,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Código",
       "Exchange Rate": "Tipo de cambio",
       "Choose language": "Elige idioma",
+      "Choose days": "Elige días",
       Chart: "Gráfico",
       Table: "Tabla",
       Date: "Fecha",
+      "My React App": "Mi aplicación React",
     },
   },
   fr: {
@@ -90,9 +98,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Code",
       "Exchange Rate": "Taux de change",
       "Choose language": "Choisir la langue",
+      "Choose days": "Choisir les jours",
       Chart: "Graphique",
       Table: "Tableau",
       Date: "Date",
+      "My React App": "Mon application React",
     },
   },
   de: {
@@ -108,9 +118,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Code",
       "Exchange Rate": "Wechselkurs",
       "Choose language": "Sprache wählen",
+      "Choose days": "Tage auswählen",
       Chart: "Diagramm",
       Table: "Tabelle",
       Date: "Datum",
+      "My React App": "Meine React-App",
     },
   },
   it: {
@@ -126,9 +138,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Codice",
       "Exchange Rate": "Tasso di cambio",
       "Choose language": "Scegli la lingua",
+      "Choose days": "Scegli i giorni",
       Chart: "Grafico",
       Table: "Tabella",
       Date: "Data",
+      "My React App": "La mia applicazione React",
     },
   },
   ru: {
@@ -144,9 +158,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "Код",
       "Exchange Rate": "Обменный курс",
       "Choose language": "Выберите язык",
+      "Choose days": "Выберите дни",
       Chart: "График",
       Table: "Таблица",
       Date: "Дата",
+      "My React App": "Мое приложение React",
     },
   },
   zh: {
@@ -162,9 +178,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "代码",
       "Exchange Rate": "汇率",
       "Choose language": "选择语言",
+      "Choose days": "选择天数",
       Chart: "图表",
       Table: "表格",
       Date: "日期",
+      "My React App": "我的 React 应用",
     },
   },
   ja: {
@@ -180,9 +198,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "コード",
       "Exchange Rate": "為替レート",
       "Choose language": "言語を選択",
+      "Choose days": "日を選択",
       Chart: "チャート",
       Table: "テーブル",
       Date: "日付",
+      "My React App": "私の React アプリ",
     },
   },
   ko: {
@@ -198,9 +218,11 @@ export const resources: Record<string, TranslationResource> = {
       Code: "코드",
       "Exchange Rate": "환율",
       "Choose language": "언어 선택",
+      "Choose days": "날짜 선택",
       Chart: "차트",
       Table: "테이블",
       Date: "날짜",
+      "My React App": "내 React 앱",
     },
   },
 };

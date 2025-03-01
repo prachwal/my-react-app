@@ -4,6 +4,9 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const isDev = process.env.NODE_ENV !== "production";
+
+console.log("dev", isDev);
 
 export default {
   entry: "./src/index.tsx",
@@ -24,7 +27,15 @@ export default {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true, // Włącza generowanie source map dla CSS
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -54,14 +65,15 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./public/index.html", // Upewnij się, że ścieżka do szablonu jest poprawna
+      template: "./public/index.html",
     }),
   ],
   devServer: {
-    static: path.join(__dirname, "public"), // Replaced contentBase with static
+    static: path.join(__dirname, "public"),
     compress: true,
-    port: 9000,
+    port: 3000,
     historyApiFallback: true,
   },
-  mode: "development",
+  mode: isDev ? "development" : "production", // Dynamiczne ustawienie mode
+  devtool: isDev ? "eval-cheap-module-source-map" : "source-map", // Devtool zależny od trybu
 };

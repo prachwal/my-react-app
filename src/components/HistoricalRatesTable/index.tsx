@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../../store";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { AppDispatch, RootState } from "../../app/store";
 import { fetchHistoricalRates } from "../../store/historicalSlice";
 import { useTranslation } from "react-i18next";
-import "./HistoricalRatesTable.css";
+import "./style.css";
 
 interface HistoricalRatesTableProps {
   currencyCode: string;
@@ -22,6 +22,7 @@ const HistoricalRatesTable: React.FC<HistoricalRatesTableProps> = ({
       loading: state.historicalRates.loading,
       error: state.historicalRates.error,
     }),
+    shallowEqual,
   );
 
   useEffect(() => {
