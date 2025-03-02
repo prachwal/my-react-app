@@ -35,12 +35,20 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
 
+  const columnTranslations: { [key: string]: string } = {
+    currency: t("Currency"),
+    code: t("Code"),
+    mid: t("Mid"),
+  };
+
   return (
-    <table className={className}>
+    <table className={`${className} dynamicTable`}>
       <thead>
         <tr>
-          {headers.map((header) => (
-            <th key={header}>{t(header)}</th>
+          {headers.map((header, index) => (
+            <th key={header} className={`column-${index + 1}`}>
+              {columnTranslations[header] || t(header)}
+            </th>
           ))}
         </tr>
       </thead>
@@ -57,8 +65,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               selectedCurrency === item.code ? "selected" : "transparent"
             }`}
           >
-            {headers.map((header) => (
-              <td key={header}>{item[header]}</td>
+            {headers.map((header, headerIndex) => (
+              <td key={header} className={`column-${headerIndex + 1}`}>
+                {item[header]}
+              </td>
             ))}
           </tr>
         ))}

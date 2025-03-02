@@ -9,12 +9,13 @@
     "of": "z",
     "Previous": "Poprzednia",
     "Next": "Następna",
-    "Currency": "Waluta",
-    "Code": "Kod",
+    "Currency": "Nazwa waluty",
+    "Code": "Kod waluty",
     "Exchange Rate": "Kurs wymiany",
     "Date": "Data",
     "Historical Rates": "Kursy historyczne",
     "Choose language": "Wybierz język",
     "Choose days": "Wybierz dni",
-    "My React App": "Moja aplikacja React"
+    "My React App": "Moja aplikacja React",
+    "Mid": "Średni kurs"
 }
