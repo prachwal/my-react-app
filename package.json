@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "homepage": "https://prachwal.github.io/my-react-app",
   "scripts": {
     "start": "webpack serve --mode development",
     "build": "webpack --mode production",
