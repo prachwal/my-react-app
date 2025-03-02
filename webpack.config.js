@@ -12,12 +12,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isDev = process.env.NODE_ENV !== "production";
 
+// Określenie prawidłowej publicPath na podstawie środowiska
+const BASE_URL = isDev ? "/" : "/my-react-app/";
+
 export default {
   entry: "./src/index.tsx",
   output: {
     filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: isDev ? "/" : "/my-react-app/",
+    publicPath: BASE_URL, // Zapewnić, że ta ścieżka jest zawsze poprawna
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -89,6 +92,8 @@ export default {
     new HtmlWebpackPlugin({
       template: "./public/index.html",
       inject: true,
+      // Upewnij się, że HtmlWebpackPlugin używa prawidłowych ścieżek
+      publicPath: BASE_URL,
     }),
     new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false }),
     new CompressionPlugin({ test: /\.(js|css)$/ }),
