@@ -14,7 +14,7 @@ import {
   Legend,
 } from "recharts";
 import { format } from "d3-format";
-import "./style.css";
+import "./style.scss";
 
 interface HistoricalRatesChartProps {
   currencyCode: string;

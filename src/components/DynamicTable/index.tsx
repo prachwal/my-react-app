@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import "./style.css";
+import "./style.scss";
 
 interface DynamicTableProps {
   data: { [key: string]: string | number }[];

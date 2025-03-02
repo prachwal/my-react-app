@@ -6,7 +6,7 @@ import Counter from "../components/Counter";
 import NbpTable from "../components/NbpTable";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import DaysSelector from "../components/DaysSelector";
-import "./App.css"; // Importuj style
+import "./App.scss"; // Zmień rozszerzenie na SCSS
 
 const App: React.FC = () => {
   const { t } = useTranslation();

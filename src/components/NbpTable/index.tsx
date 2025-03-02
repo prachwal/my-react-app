@@ -9,7 +9,7 @@ import HistoricalRatesTable from "../HistoricalRatesTable";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useTranslation } from "react-i18next";
 import "react-tabs/style/react-tabs.css";
-import "./style.css";
+import "./style.scss";
 
 interface NbpTableProps {
   days: number;

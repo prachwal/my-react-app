@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store";
 import { increment, decrement } from "../../store/counterSlice";
-import "./style.css"; // Import pliku CSS
+import "./style.scss"; // Zmień rozszerzenie na SCSS
 
 const Counter: React.FC = () => {
   const count = useSelector((state: RootState) => state.counter.value);

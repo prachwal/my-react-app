@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { AppDispatch, RootState } from "../../app/store";
 import { fetchHistoricalRates } from "../../store/historicalSlice";
 import { useTranslation } from "react-i18next";
-import "./style.css";
+import "./style.scss";
 
 interface HistoricalRatesTableProps {
   currencyCode: string;

@@ -5,6 +5,8 @@ import TerserPlugin from "terser-webpack-plugin";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import CompressionPlugin from "compression-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin"; // Dodaj ten import
+import * as sass from "sass";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +17,7 @@ export default {
   output: {
     filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: isDev ? "/" : "/my-react-app/", // Ustaw odpowiednią ścieżkę publiczną
+    publicPath: isDev ? "/" : "/my-react-app/",
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -24,10 +26,20 @@ export default {
     rules: [
       { test: /\.(ts|tsx)$/, use: "ts-loader", exclude: /node_modules/ },
       {
-        test: /\.css$/,
+        test: /\.(scss|css)$/,
         use: [
-          "style-loader",
+          MiniCssExtractPlugin.loader, // Zastąp "style-loader" na MiniCssExtractPlugin.loader
           { loader: "css-loader", options: { sourceMap: isDev } },
+          {
+            loader: "sass-loader",
+            options: {
+              implementation: sass,
+              sourceMap: isDev,
+              sassOptions: {
+                api: "modern",
+              },
+            },
+          },
         ],
       },
       {
@@ -67,6 +79,8 @@ export default {
           mangle: true,
           output: { comments: false },
         },
+        extractComments: false,
+        parallel: true,
       }),
     ],
   },
@@ -74,17 +88,22 @@ export default {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
-      inject: true, // Upewnij się, że skrypty są wstrzykiwane do HTML-a
+      inject: true,
     }),
     new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false }),
     new CompressionPlugin({ test: /\.(js|css)$/ }),
+    new MiniCssExtractPlugin({
+      // Dodaj tę wtyczkę
+      filename: "[name].[contenthash].css", // Nazwa pliku CSS z hashem
+      chunkFilename: "[id].[contenthash].css",
+    }),
   ],
   devServer: {
     static: path.join(__dirname, "public"),
     compress: true,
     port: 3000,
     historyApiFallback: true,
-    hot: true, // Włącz hot module replacement
+    hot: true,
   },
   mode: isDev ? "development" : "production",
   devtool: isDev ? "eval-cheap-module-source-map" : false,
