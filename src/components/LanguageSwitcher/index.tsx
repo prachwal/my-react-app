@@ -1,23 +1,28 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { resources } from "../../utils/i18n";
-import LanguageManager from "../../hooks/LanguageManager";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { changeLanguage } from "../../slices/languageSlice";
 import "./style.scss";
 
 const LanguageSwitcher: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { language, availableLanguages } = useAppSelector(
+    (state) => state.language,
+  );
 
   useEffect(() => {
-    const savedLanguage = LanguageManager.getDefaultLanguage();
-    if (savedLanguage) {
-      i18n.changeLanguage(savedLanguage);
+    if (language && language !== i18n.language) {
+      i18n.changeLanguage(language);
     }
-  }, [i18n]);
+  }, [language, i18n]);
 
-  const changeLanguage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeLanguage = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const newLanguage = event.target.value;
+    dispatch(changeLanguage(newLanguage));
     i18n.changeLanguage(newLanguage);
-    LanguageManager.setLanguage(newLanguage);
   };
 
   return (
@@ -25,12 +30,12 @@ const LanguageSwitcher: React.FC = () => {
       <label htmlFor="language-select">{t("Choose language")}:</label>
       <select
         id="language-select"
-        onChange={changeLanguage}
-        value={i18n.language}
+        onChange={handleChangeLanguage}
+        value={language}
       >
-        {Object.keys(resources).map((lng) => (
-          <option key={lng} value={lng}>
-            {resources[lng].name}
+        {availableLanguages.map((lng) => (
+          <option key={lng.code} value={lng.code}>
+            {lng.name}
           </option>
         ))}
       </select>

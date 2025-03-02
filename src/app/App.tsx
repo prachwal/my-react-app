@@ -6,7 +6,7 @@ import NbpTable from "../components/NbpTable";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import DaysSelector from "../components/DaysSelector";
 import ErrorBoundary from "../components/ErrorBoundary"; // Nowy komponent do obsługi błędów
-import { RootState } from "./store";
+import { RootState } from "../store/store";
 import { setDays } from "../slices/daysSlice"; // Nowy slice dla dni
 import "./App.scss";
 

@@ -1,0 +1,20 @@
+{
+    "Select a currency to see historical data": "通貨を選択して履歴データを表示します",
+    "Loading": "読み込み中...",
+    "Chart": "チャート",
+    "Table": "テーブル",
+    "Error": "エラー",
+    "No data available": "利用可能なデータがありません",
+    "Page": "ページ",
+    "of": "の",
+    "Previous": "前",
+    "Next": "次",
+    "Currency": "通貨",
+    "Code": "コード",
+    "Exchange Rate": "為替レート",
+    "Date": "日付",
+    "Historical Rates": "過去のレート",
+    "Choose language": "言語を選択",
+    "Choose days": "日を選択",
+    "My React App": "私の React アプリ"
+}

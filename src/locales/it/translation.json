@@ -1,0 +1,20 @@
+{
+    "Select a currency to see historical data": "Seleziona una valuta per vedere i dati storici",
+    "Loading": "Caricamento...",
+    "Chart": "Grafico",
+    "Table": "Tabella",
+    "Error": "Errore",
+    "No data available": "Nessun dato disponibile",
+    "Page": "Pagina",
+    "of": "di",
+    "Previous": "Precedente",
+    "Next": "Successivo",
+    "Currency": "Valuta",
+    "Code": "Codice",
+    "Exchange Rate": "Tasso di cambio",
+    "Date": "Data",
+    "Historical Rates": "Tassi storici",
+    "Choose language": "Scegli la lingua",
+    "Choose days": "Scegli i giorni",
+    "My React App": "La mia applicazione React"
+}

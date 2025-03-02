@@ -1,0 +1,20 @@
+{
+    "Select a currency to see historical data": "Выберите валюту, чтобы увидеть исторические данные",
+    "Loading": "Загрузка...",
+    "Chart": "График",
+    "Table": "Таблица",
+    "Error": "Ошибка",
+    "No data available": "Нет доступных данных",
+    "Page": "Страница",
+    "of": "из",
+    "Previous": "Предыдущая",
+    "Next": "Следующая",
+    "Currency": "Валюта",
+    "Code": "Код",
+    "Exchange Rate": "Обменный курс",
+    "Date": "Дата",
+    "Historical Rates": "Исторические курсы",
+    "Choose language": "Выберите язык",
+    "Choose days": "Выберите дни",
+    "My React App": "Мое приложение React"
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch } from "../../app/store";
-import { RootState } from "../../app/store";
+import { AppDispatch } from "../../store/store";
+import { RootState } from "../../store/store";
 import { fetchExchangeRates } from "../../slices/nbpSlice";
 import DynamicTable from "../DynamicTable";
 import HistoricalRatesChart from "../HistoricalRatesChart";

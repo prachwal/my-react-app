@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { AppDispatch, RootState } from "../../app/store";
+import { AppDispatch, RootState } from "../../store/store";
 import { fetchHistoricalRates } from "../../slices/historicalSlice";
 import { useTranslation } from "react-i18next";
 import {
