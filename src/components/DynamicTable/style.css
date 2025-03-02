@@ -1,0 +1,23 @@
+.nbp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nbp-table th,
+.nbp-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.nbp-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.nbp-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+}

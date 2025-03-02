@@ -1,0 +1,54 @@
+.nbp-table-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nbp-table {
+  width: 50%;
+  border-collapse: collapse;
+}
+
+.nbp-table th,
+.nbp-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.nbp-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.nbp-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.pagination-controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.pagination-controls span {
+  margin: 0 10px;
+}
+
+.historical-rates-container {
+  width: 45%;
+}
+
+.historical-rates-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
