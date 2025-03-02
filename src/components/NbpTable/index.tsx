@@ -56,21 +56,21 @@ const NbpTable: React.FC<NbpTableProps> = ({ days }) => {
   return (
     <div>
       <div className="nbp-table-container">
-        <div className="nbp-table">
+        <div className="nbp-table-wrapper">
           <DynamicTable
             data={exchangeRates}
             className="nbp-table"
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onRowClick={handleRowClick}
-            selectedCurrency={selectedCurrency} // Przekaż wybraną walutę do DynamicTable
+            selectedCurrency={selectedCurrency}
             totalPages={totalPages}
             handlePreviousPage={handlePreviousPage}
             handleNextPage={handleNextPage}
           />
         </div>
-        {selectedCurrency && (
-          <div className="historical-rates-container">
+        <div className="historical-rates-container">
+          {selectedCurrency ? (
             <Tabs>
               <TabList>
                 <Tab>{t("Chart")}</Tab>
@@ -90,8 +90,12 @@ const NbpTable: React.FC<NbpTableProps> = ({ days }) => {
                 />
               </TabPanel>
             </Tabs>
-          </div>
-        )}
+          ) : (
+            <div className="placeholder-message">
+              {t("Select a currency to see historical data")}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

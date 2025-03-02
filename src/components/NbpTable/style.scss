@@ -1,10 +1,41 @@
 .nbp-table-container {
   display: flex;
   justify-content: space-between;
+  gap: 20px;
 }
 
-.nbp-table {
+.nbp-table-wrapper {
   width: 50%;
+  flex-shrink: 0;
+}
+
+.historical-rates-container {
+  width: 50%;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.placeholder-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #777;
+  font-style: italic;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.historical-rates-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+// Style tabeli - usunięcie duplikacji
+.nbp-table {
+  width: 100%;
   border-collapse: collapse;
 }
 
@@ -32,23 +63,14 @@
   justify-content: center;
   align-items: center;
   margin-top: 10px;
-}
 
-.pagination-controls button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
+  button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
 
-.pagination-controls span {
-  margin: 0 10px;
-}
-
-.historical-rates-container {
-  width: 45%;
-}
-
-.historical-rates-table-container {
-  max-height: 400px;
-  overflow-y: auto;
+  span {
+    margin: 0 10px;
+  }
 }
