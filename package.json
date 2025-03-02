@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "webpack serve --mode development",
-    "build": "webpack --mode production",
+    "build": "react-scripts build",
     "clean": "rimraf dist",
     "rebuild": "npm run clean && npm run build",
     "test": "jest",
