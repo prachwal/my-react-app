@@ -6,7 +6,7 @@
   "homepage": "https://prachwal.github.io/my-react-app",
   "scripts": {
     "start": "webpack serve --mode development",
-    "build": "webpack --mode production",
+    "build": "cross-env NODE_ENV=production webpack --mode production",
     "clean": "rimraf dist",
     "rebuild": "npm run clean && npm run build",
     "test": "jest",
@@ -14,7 +14,7 @@
     "docker:start": "docker-compose up --build",
     "lint": "npx eslint --config eslint.config.js \"src/**/*.{ts,tsx}\"",
     "lint:fix": "npx eslint --config eslint.config.js \"src/**/*.{ts,tsx}\" --fix",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "cross-env NODE_ENV=production npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.0",
@@ -42,6 +42,7 @@
     "@typescript-eslint/typescript-estree": "^8.25.0",
     "clean-webpack-plugin": "^4.0.0",
     "compression-webpack-plugin": "^11.1.0",
+    "cross-env": "^7.0.3",
     "cross-spawn": "^7.0.6",
     "css-loader": "^7.1.2",
     "eslint": "^9.21.0",

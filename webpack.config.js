@@ -10,10 +10,21 @@ import * as sass from "sass";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const isDev = process.env.NODE_ENV !== "production";
+
+// Rozpoznawanie trybu bezpośrednio z argumentów webpacka
+const mode =
+  process.env.NODE_ENV ||
+  (process.argv.includes("--mode=production")
+    ? "production"
+    : process.argv.includes("--mode")
+    ? "production"
+    : "development");
+const isDev = mode !== "production";
 
 // Określenie prawidłowej publicPath na podstawie środowiska
 const BASE_URL = isDev ? "/" : "/my-react-app/";
+
+console.log(`Tryb: ${mode}, isDev: ${isDev}`);
 
 export default {
   entry: "./src/index.tsx",
