@@ -1,12 +1,17 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import store from "./app/store";
 import App from "./app/App";
-import "./utils/i18n"; // Importuj konfigurację i18n
+import "./utils/i18n"; // Zakładam, że masz konfigurację i18n
+import ReactDOM from "react-dom/client";
 
-const container = document.getElementById("root");
-if (container) {
-  const root = createRoot(container);
-  root.render(<App />);
-} else {
-  throw new Error("Root container not found");
-}
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement,
+);
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>,
+);

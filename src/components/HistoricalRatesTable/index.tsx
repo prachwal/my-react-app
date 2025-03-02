@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { AppDispatch, RootState } from "../../app/store";
-import { fetchHistoricalRates } from "../../store/historicalSlice";
+import { fetchHistoricalRates } from "../../slices/historicalSlice";
 import { useTranslation } from "react-i18next";
 import "./style.scss";
 
@@ -16,6 +16,7 @@ const HistoricalRatesTable: React.FC<HistoricalRatesTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+
   const { historicalRates, loading, error } = useSelector(
     (state: RootState) => ({
       historicalRates: state.historicalRates.historicalRates,

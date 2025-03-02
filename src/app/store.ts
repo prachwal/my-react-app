@@ -1,11 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-import rootReducer from "../store/rootReducer";
+import daysReducer from "../slices/daysSlice";
+import counterReducer from "../slices/counterSlice";
+import nbpReducer from "../slices/nbpSlice";
+import historicalRatesReducer from "../slices/historicalSlice";
 
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: {
+    counter: counterReducer,
+    nbp: nbpReducer,
+    historicalRates: historicalRatesReducer,
+    days: daysReducer,
+  },
 });
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export default store;

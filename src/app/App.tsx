@@ -1,36 +1,48 @@
-import React, { useState } from "react";
-import { Provider } from "react-redux";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import store from "./store";
+import { useSelector, useDispatch } from "react-redux";
 import Counter from "../components/Counter";
 import NbpTable from "../components/NbpTable";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import DaysSelector from "../components/DaysSelector";
-import "./App.scss"; // Zmień rozszerzenie na SCSS
+import ErrorBoundary from "../components/ErrorBoundary"; // Nowy komponent do obsługi błędów
+import { RootState } from "./store";
+import { setDays } from "../slices/daysSlice"; // Nowy slice dla dni
+import "./App.scss";
 
+/**
+ * Główny komponent aplikacji
+ */
 const App: React.FC = () => {
   const { t } = useTranslation();
-  const [days, setDays] = useState(10);
+  const days = useSelector((state: RootState) => state.days.value);
+  const dispatch = useDispatch();
+
+  // Zoptymalizowana funkcja zmiany dni z useCallback
+  const handleDaysChange = useCallback(
+    (newDays: number) => {
+      dispatch(setDays(newDays));
+    },
+    [dispatch],
+  );
 
   return (
-    <React.StrictMode>
-      <Provider store={store}>
-        <div className="app-container">
-          <div className="title-row">
-            <h1>{t("My React App")}</h1>
-          </div>
-          <div className="controls-row">
-            <LanguageSwitcher />
-            <DaysSelector days={days} onDaysChange={setDays} />
-            <Counter />
-          </div>
-          <div className="nbp-table-row">
-            <NbpTable days={days} />
-          </div>
+    <ErrorBoundary>
+      <div className="app-container">
+        <div className="title-row">
+          <h1>{t("My React App")}</h1>
         </div>
-      </Provider>
-    </React.StrictMode>
+        <div className="controls-row">
+          <LanguageSwitcher />
+          <DaysSelector days={days} onDaysChange={handleDaysChange} />
+          <Counter />
+        </div>
+        <div className="nbp-table-row">
+          <NbpTable days={days} />
+        </div>
+      </div>
+    </ErrorBoundary>
   );
 };
 
-export default App;
+export default React.memo(App);

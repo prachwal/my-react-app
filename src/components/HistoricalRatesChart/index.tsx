@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { AppDispatch, RootState } from "../../app/store";
-import { fetchHistoricalRates } from "../../store/historicalSlice";
+import { fetchHistoricalRates } from "../../slices/historicalSlice";
 import { useTranslation } from "react-i18next";
 import {
   ResponsiveContainer,
@@ -48,8 +48,12 @@ const HistoricalRatesChart: React.FC<HistoricalRatesChartProps> = ({
     return <div>{error}</div>;
   }
 
-  const minRate = Math.min(...historicalRates.map((rate) => rate.mid));
-  const maxRate = Math.max(...historicalRates.map((rate) => rate.mid));
+  const minRate = Math.min(
+    ...historicalRates.map((rate: { mid: number }) => rate.mid),
+  );
+  const maxRate = Math.max(
+    ...historicalRates.map((rate: { mid: number }) => rate.mid),
+  );
   const margin = (maxRate - minRate) * 0.1;
 
   const formatYAxis = format(".3f");
