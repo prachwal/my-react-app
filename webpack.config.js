@@ -15,7 +15,7 @@ export default {
   output: {
     filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: "/my-react-app/", // Ustaw odpowiednią ścieżkę publiczną
+    publicPath: isDev ? "/" : "/my-react-app/", // Ustaw odpowiednią ścieżkę publiczną
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -72,7 +72,10 @@ export default {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+    new HtmlWebpackPlugin({
+      template: "./public/index.html",
+      inject: true, // Upewnij się, że skrypty są wstrzykiwane do HTML-a
+    }),
     new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false }),
     new CompressionPlugin({ test: /\.(js|css)$/ }),
   ],
@@ -81,6 +84,7 @@ export default {
     compress: true,
     port: 3000,
     historyApiFallback: true,
+    hot: true, // Włącz hot module replacement
   },
   mode: isDev ? "development" : "production",
   devtool: isDev ? "eval-cheap-module-source-map" : false,
