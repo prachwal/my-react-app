@@ -12,7 +12,8 @@
     "docker:build": "docker build -t my-react-app .",
     "docker:start": "docker-compose up --build",
     "lint": "npx eslint --config eslint.config.js \"src/**/*.{ts,tsx}\"",
-    "lint:fix": "npx eslint --config eslint.config.js \"src/**/*.{ts,tsx}\" --fix"
+    "lint:fix": "npx eslint --config eslint.config.js \"src/**/*.{ts,tsx}\" --fix",
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.0",
@@ -38,6 +39,8 @@
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "@typescript-eslint/typescript-estree": "^8.25.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "compression-webpack-plugin": "^11.1.0",
     "css-loader": "^7.1.2",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.0.2",
@@ -45,6 +48,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "gh-pages": "^6.3.0",
     "glob": "^11.0.1",
     "html-webpack-plugin": "^5.6.3",
     "identity-obj-proxy": "^3.0.0",
@@ -52,11 +56,13 @@
     "jest-environment-jsdom": "^29.7.0",
     "rimraf": "^6.0.1",
     "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.12",
     "ts-jest": "^29.2.6",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
     "webpack": "^5.98.0",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"
   }

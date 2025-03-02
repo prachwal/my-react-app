@@ -1,40 +1,33 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import TerserPlugin from "terser-webpack-plugin";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CompressionPlugin from "compression-webpack-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isDev = process.env.NODE_ENV !== "production";
 
-console.log("dev", isDev);
-
 export default {
   entry: "./src/index.tsx",
   output: {
-    filename: "bundle.js",
+    filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: "/",
+    publicPath: "/my-react-app/", // Ustaw odpowiednią ścieżkę publiczną
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
   module: {
     rules: [
-      {
-        test: /\.(ts|tsx)$/,
-        use: "ts-loader",
-        exclude: /node_modules/,
-      },
+      { test: /\.(ts|tsx)$/, use: "ts-loader", exclude: /node_modules/ },
       {
         test: /\.css$/,
         use: [
           "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              sourceMap: true, // Włącza generowanie source map dla CSS
-            },
-          },
+          { loader: "css-loader", options: { sourceMap: isDev } },
         ],
       },
       {
@@ -42,31 +35,46 @@ export default {
         use: [
           {
             loader: "file-loader",
-            options: {
-              name: "[path][name].[ext]",
-              outputPath: "images/",
-            },
+            options: { name: "[path][name].[ext]", outputPath: "images/" },
           },
-        ],
-      },
-      {
-        test: /favicon\.ico$/,
-        use: [
           {
-            loader: "file-loader",
-            options: {
-              name: "[name].[ext]",
-              outputPath: "/",
-            },
+            loader: "image-webpack-loader",
+            options: { mozjpeg: { quality: 65 } },
           },
         ],
       },
     ],
   },
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+      minSize: 20000,
+      maxSize: 50000,
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all",
+        },
+        common: { minChunks: 2, name: "common", reuseExistingChunk: true },
+      },
+    },
+    minimize: !isDev,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: { drop_console: true, unused: true, dead_code: true },
+          mangle: true,
+          output: { comments: false },
+        },
+      }),
+    ],
+  },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-    }),
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+    new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false }),
+    new CompressionPlugin({ test: /\.(js|css)$/ }),
   ],
   devServer: {
     static: path.join(__dirname, "public"),
@@ -74,6 +82,6 @@ export default {
     port: 3000,
     historyApiFallback: true,
   },
-  mode: isDev ? "development" : "production", // Dynamiczne ustawienie mode
-  devtool: isDev ? "eval-cheap-module-source-map" : "source-map", // Devtool zależny od trybu
+  mode: isDev ? "development" : "production",
+  devtool: isDev ? "eval-cheap-module-source-map" : false,
 };
