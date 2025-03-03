@@ -2,23 +2,45 @@
 
 This project is a simple React application built with TypeScript and bundled using Webpack.
 
+## Features
+
+- React with TypeScript support
+- Webpack bundling
+- Development server with hot reload
+- Production build optimization
+- Docker support
+- Redux state management
+- Internationalization (i18n) support
+- Unit testing setup
+
 ## Project Structure
 
 ```
 my-react-app
-├── src
-│   ├── components
-│   │   └── App.tsx        # Defines the main App component
-│   ├── index.tsx          # Entry point of the application
-│   └── types
-│       └── index.ts       # Exports types and interfaces used in the app
-├── public
-│   └── index.html         # HTML template for the application
-├── package.json            # npm configuration file
-├── tsconfig.json           # TypeScript configuration file
-├── webpack.config.js       # Webpack configuration file
-└── README.md               # Project documentation
+├── src/
+│   ├── __tests__/         # Test files for components and utilities
+│   ├── app/              # Core application setup and configuration
+│   ├── components/       # Reusable UI components
+│   ├── hooks/           # Custom React hooks
+│   ├── locales/         # Internationalization files and translations
+│   ├── slices/          # Redux toolkit slices for state management
+│   ├── store/           # Redux store configuration
+│   ├── types/           # TypeScript type definitions and interfaces
+│   ├── utils/           # Utility functions and helpers
+│   └── index.tsx        # Application entry point
+├── public/
+│   └── index.html       # HTML template for the application
+├── package.json         # npm configuration and scripts
+├── tsconfig.json        # TypeScript configuration
+├── webpack.config.js    # Webpack configuration
+└── README.md           # Project documentation
 ```
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- Docker (optional, for containerization)
 
 ## Installation
 
@@ -30,59 +52,121 @@ cd my-react-app
 npm install
 ```
 
-## Running the Application
+## Available Scripts
 
-To run the application in development mode, use the following command:
+In the project directory, you can run:
+
+### Development
 
 ```bash
 npm start
 ```
 
-This will start the development server and open the application in your default web browser.
+Runs the app in development mode with hot reload enabled.\
+Open [http://localhost:9000](http://localhost:9000) to view it in the browser.
 
-The application will be available at:
-
-- Loopback: [http://localhost:9000/](http://localhost:9000/)
-- On Your Network (IPv4): [http://172.18.0.2:9000/](http://172.18.0.2:9000/)
-
-## Building the Application
-
-To create a production build of the application, use the following command:
+### Building
 
 ```bash
+# Production build
 npm run build
+
+# Clean the dist directory
+npm run clean
+
+# Clean and rebuild
+npm run rebuild
 ```
 
-This will generate the optimized files in the `dist` directory.
+- `build` - Creates an optimized production build in the `dist` directory
+- `clean` - Removes the `dist` directory
+- `rebuild` - Combines clean and build commands for a fresh build
 
-## Debugging Errors
+### Testing
 
-If you encounter errors while running the application, you can check the log files for more details. For example, if you see an error like `npm error signal SIGTERM`, you can find the complete log in the following location:
+```bash
+npm test
+```
+
+Launches the test runner (Jest) in interactive watch mode.\
+Tests are located in the `src/__tests__` directory.
+
+### Code Quality
+
+```bash
+# Run ESLint
+npm run lint
+
+# Fix auto-fixable ESLint issues
+npm run lint:fix
+```
+
+Checks and fixes code quality issues using ESLint with TypeScript support.
+
+### Docker
+
+```bash
+# Build Docker image
+npm run docker:build
+
+# Start Docker container
+npm run docker:start
+```
+
+- `docker:build` - Builds a Docker image for the application
+- `docker:start` - Starts the application using Docker Compose
+
+### Deployment
+
+```bash
+npm run deploy
+```
+
+Builds the app and deploys it to GitHub Pages.\
+The app will be available at [https://prachwal.github.io/my-react-app](https://prachwal.github.io/my-react-app)
+
+## Docker Support
+
+### Checking Port Mappings
+
+To check the port mappings in Docker Compose, use:
+
+```bash
+docker-compose ps
+```
+
+This command will show a list of running services and their port mappings.
+
+## Troubleshooting
+
+### Debugging npm Errors
+
+If you encounter npm-related errors, check the log files located at:
 
 ```
 /root/.npm/_logs/<timestamp>-debug-0.log
 ```
 
-Replace `<timestamp>` with the actual timestamp from the error message.
+To view the log contents:
 
-To view the log file, you can use the following command:
-
-```sh
+```bash
 cat /root/.npm/_logs/<timestamp>-debug-0.log
 ```
 
-This will display the contents of the log file, which can help you diagnose and fix the issue.
+### Common Issues
 
-## Sprawdzanie mapowania portów
+1. **Port already in use**: Stop any running processes on port 9000 or modify the port in webpack.config.js
+2. **Module not found**: Run `npm install` to ensure all dependencies are installed
+3. **TypeScript errors**: Check `tsconfig.json` settings and ensure proper type definitions
 
-Aby sprawdzić mapowanie portów w Docker Compose, użyj poniższego polecenia:
+## Contributing
 
-```sh
-docker-compose ps
-```
-
-To polecenie pokaże listę uruchomionych usług i ich mapowania portów.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
