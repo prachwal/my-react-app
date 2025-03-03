@@ -10,13 +10,15 @@ const Counter: React.FC = () => {
 
   return (
     <div className="counter-container">
-      <button type="button" onClick={() => dispatch(decrement())}>
-        &lt;
-      </button>
-      <div className="counter-value">{count.toString().padStart(3, "0")}</div>
-      <button type="button" onClick={() => dispatch(increment())}>
-        &gt;
-      </button>
+      <div className="counter-row">
+        <button type="button" onClick={() => dispatch(decrement())}>
+          &lt;
+        </button>
+        <div className="counter-value">{count.toString().padStart(3, "0")}</div>
+        <button type="button" onClick={() => dispatch(increment())}>
+          &gt;
+        </button>
+      </div>
     </div>
   );
 };

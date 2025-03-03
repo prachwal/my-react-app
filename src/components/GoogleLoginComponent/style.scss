@@ -1,0 +1,22 @@
+/* filepath: /c:/Users/przem/source/repos/ai-react-app/my-react-app/src/components/HistoricalRatesChart/style.scss */
+.google-login-container {
+  width: 274px;
+  height: 38px;
+  margin-left: auto; /* Przesuwa element do prawej strony wewnątrz flex */
+}
+
+.logged-in-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logged-in-info button {
+  height: 38px;
+  width: 80px;
+  font-size: 1.1rem;
+}
+
+.user-info {
+  font-size: 1.1rem;
+}

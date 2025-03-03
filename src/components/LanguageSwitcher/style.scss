@@ -1,6 +1,11 @@
 /* filepath: /c:/Users/przem/source/repos/ai-react-app/my-react-app/src/components/LanguageSwitcher/style.scss */
 .language-switcher {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
+}
+
+.language-switcher label {
+  margin-right: 5px; /* Dodano margines po prawej stronie */
+  font-size: 1.1rem;
 }
 
 .language-switcher select {

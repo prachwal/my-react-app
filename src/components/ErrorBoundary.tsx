@@ -34,6 +34,7 @@ class ErrorBoundary extends Component<Props, State> {
             <p>{this.state.error?.toString()}</p>
           </details>
           <button
+            type="button"
             onClick={() => this.setState({ hasError: false })}
             className="error-reset-button"
           >

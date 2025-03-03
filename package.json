@@ -17,6 +17,7 @@
     "deploy": "cross-env NODE_ENV=production npm run build && gh-pages -d dist"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.6.0",
     "d3-format": "^3.1.0",
     "i18next": "^22.0.0",

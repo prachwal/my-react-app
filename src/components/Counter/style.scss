@@ -2,9 +2,21 @@
 .counter-container {
   display: flex;
   align-items: center;
+  justify-content: center; /* Dodano wyrównanie do środka */
+}
+
+.counter-container .counter-row {
+  display: flex;
+  align-items: center;
+}
+
+.counter-container .counter-row button {
+  font-size: 1.1rem; /* Dodano stylizację przycisków */
+  width: 29px;
+  height: 29px;
 }
 
 .counter-value {
   margin: 0 10px;
-  font-size: 2rem;
+  font-size: 1.1rem;
 }

@@ -7,17 +7,19 @@
 .title-row {
   display: table-row;
   text-align: center;
+  margin-bottom: 10px;
 }
 
 .controls-row {
-  display: table-row;
-  text-align: left;
+  display: flex; /* Zamiast display: table-row */
+  justify-content: space-between; /* Rozkłada elementy, ostatni pójdzie na prawo */
+  align-items: center; /* Wyrównuje elementy w pionie */
   padding: 10px;
+  margin-bottom: 10px;
 }
 
 .controls-row > * {
-  display: inline-block;
-  margin-right: 10px;
+  margin-right: 10px; /* Zachowujemy odstęp między elementami */
 }
 
 .nbp-table-row {

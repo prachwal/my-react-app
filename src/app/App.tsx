@@ -8,6 +8,7 @@ import DaysSelector from "../components/DaysSelector";
 import ErrorBoundary from "../components/ErrorBoundary"; // Nowy komponent do obsługi błędów
 import { RootState } from "../store/store";
 import { setDays } from "../slices/daysSlice"; // Nowy slice dla dni
+import GoogleLoginComponent from "../components/GoogleLoginComponent"; // Import nowego komponentu
 import "./App.scss";
 
 /**
@@ -17,6 +18,8 @@ const App: React.FC = () => {
   const { t } = useTranslation();
   const days = useSelector((state: RootState) => state.days.value);
   const dispatch = useDispatch();
+  const clientId =
+    "802826185441-kjjlcqbn5ftspjn2urv7jidhcvjk7543.apps.googleusercontent.com";
 
   // Zoptymalizowana funkcja zmiany dni z useCallback
   const handleDaysChange = useCallback(
@@ -36,6 +39,7 @@ const App: React.FC = () => {
           <LanguageSwitcher />
           <DaysSelector days={days} onDaysChange={handleDaysChange} />
           <Counter />
+          <GoogleLoginComponent clientId={clientId} />
         </div>
         <div className="nbp-table-row">
           <NbpTable days={days} />

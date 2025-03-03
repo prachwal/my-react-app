@@ -79,6 +79,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             <div className="pagination-controls">
               <button
                 type="button"
+                className="previous-page"
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
               >
@@ -89,6 +90,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               </span>
               <button
                 type="button"
+                className="next-page"
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
               >

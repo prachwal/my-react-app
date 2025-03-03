@@ -1,6 +1,11 @@
 /* filepath: /c:/Users/przem/source/repos/ai-react-app/my-react-app/src/components/DaysSelector/style.scss */
 .days-selector {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
+}
+
+.days-selector label {
+  margin-right: 5px; /* Dodano margines po prawej stronie */
+  font-size: 1.1rem;
 }
 
 .days-selector select {
