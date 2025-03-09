@@ -1,23 +1,23 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18
+FROM node:20-alpine
 
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Instalacja morgan (jeśli nie ma w package.json)
+RUN npm install morgan
+
 COPY . .
 
-# Build the application
-RUN npm run build
+# Kopiowanie skryptu wait-for-it.sh
+COPY ./wait-for-it.sh ./wait-for-it.sh
+RUN chmod +x ./wait-for-it.sh
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Kopiowanie folderu dist
+COPY ./dist ./dist
 
-# Define the command to run the app
-CMD ["npm", "start"]
+# Eksponowanie portów 80 (HTTP) i 443 (HTTPS)
+EXPOSE 80 443
+
+CMD ["node", "src/server.js"]

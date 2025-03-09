@@ -1,13 +1,39 @@
-version: "3.9"
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: node-server:latest
+    container_name: node-container
     ports:
-      - "9000:9000"
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ./certs:/app/certs
+      - ./logs:/app/logs
+      - ./src/handlers:/app/src/handlers
+    depends_on:
+      - mongo
+    entrypoint:
+      ["/app/wait-for-it.sh", "mongo:27017", "--", "npm", "run", "start:server"]
     environment:
-      - NODE_ENV=development
-    command: sh -c "npm install && npm start"
+      - MONGO_URI=mongodb://mongo:27017/appdb
+      - CHOKIDAR_USEPOLLING=true # Opcjonalne dla lepszej obsługi
+      - CHOKIDAR_INTERVAL=100 # Krótszy czas sprawdzania zmian
+      - NODE_OPTIONS=--trace-warnings # Opcjonalne do debugowania
+
+  mongo:
+    image: mongo:6
+    container_name: mongo-container
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data:/data/db # Mapowanie folderu na hoście
+    environment:
+      - MONGO_INITDB_DATABASE=appdb
+
+volumes:
+  mongo_data:
+    external: false # Umożliwia używanie lokalnego folderu, a nie tylko wewnętrznego wolumenu
