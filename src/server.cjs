@@ -1,3 +1,4 @@
+// server.cjs
 const https = require("https");
 const http = require("http");
 const fs = require("fs");
@@ -15,8 +16,8 @@ const options = {
   key: fs.readFileSync(path.join(__dirname, "../certs/server.key")),
   cert: fs.readFileSync(path.join(__dirname, "../certs/server.crt")),
   ca: fs.readFileSync(path.join(__dirname, "../certs/rootCA.crt")),
-  requestCert: true,
-  rejectUnauthorized: true,
+  requestCert: true, // Żądamy certyfikatu, ale nie wymagamy go globalnie
+  rejectUnauthorized: false, // Nie odrzucamy połączeń bez certyfikatu
 };
 
 const accessLogStream = fs.createWriteStream(
@@ -27,21 +28,16 @@ const accessLogStream = fs.createWriteStream(
 const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/appdb";
 
 mongoose
-  .connect(mongoUri, { serverSelectionTimeoutMS: 5000 }) // Zwiększ czas oczekiwania na połączenie
+  .connect(mongoUri, { serverSelectionTimeoutMS: 5000 })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Funkcja do tworzenia bazy danych, jeżeli nie istnieje
 async function ensureDatabaseExists() {
   try {
     await mongoose.connect(mongoUri);
     console.log("Connected to MongoDB");
-
-    // Tworzymy przykładową kolekcję (jeśli baza nie istnieje, MongoDB ją utworzy)
     const ExampleSchema = new mongoose.Schema({ name: String });
     const ExampleModel = mongoose.model("Example", ExampleSchema);
-
-    // Dodajemy przykładowy dokument, aby baza została utworzona
     await ExampleModel.create({ name: "Initial Document" });
     console.log("Example document created, database is set up.");
   } catch (err) {
@@ -49,10 +45,8 @@ async function ensureDatabaseExists() {
   }
 }
 
-// Wywołanie funkcji
 ensureDatabaseExists();
 
-// Obsługa plików statycznych z folderu dist
 app.use(
   express.static(path.join(__dirname, "../dist"), {
     index: ["index.html", "index.htm"],
@@ -73,10 +67,12 @@ async function loadHandlers() {
   try {
     const files = fs.readdirSync(handlersDir);
     for (const file of files) {
-      if (file.endsWith(".js")) {
-        const moduleName = file.replace("Handler.js", "").toLowerCase();
+      if (file.endsWith(".cjs")) {
+        // Zmiana z .js na .cjs
+        const moduleName = file.replace("Handler.cjs", "").toLowerCase(); // Zmiana z .js na .cjs
         const fullPath = path.join(handlersDir, file);
-        handlers[moduleName] = await import(fullPath);
+        const module = await import(fullPath);
+        handlers[moduleName] = module.default; // Używamy default dla zgodności z importem
         console.log(`[INFO] Loaded handler for /${moduleName}`);
       }
     }
@@ -131,19 +127,25 @@ httpServer.listen(HTTP_PORT, () => {
   );
 });
 
-// Monitorowanie zmian w folderze handlers
+// Monitorowanie zmian w folderze handlers dla plików .cjs
 chokidar
   .watch(handlersDir, { persistent: true })
   .on("change", async (filePath) => {
-    console.log(`[INFO] Detected change in ${filePath}, reloading handler...`);
-    try {
-      const moduleName = path
-        .basename(filePath, ".js")
-        .replace("Handler", "")
-        .toLowerCase();
-      handlers[moduleName] = await import(filePath);
-      console.log(`[INFO] Reloaded handler for /${moduleName}`);
-    } catch (err) {
-      console.error(`[ERROR] Failed to reload handler ${filePath}:`, err);
+    if (filePath.endsWith(".cjs")) {
+      // Sprawdzamy tylko pliki .cjs
+      console.log(
+        `[INFO] Detected change in ${filePath}, reloading handler...`,
+      );
+      try {
+        const moduleName = path
+          .basename(filePath, ".cjs") // Zmiana z .js na .cjs
+          .replace("Handler", "")
+          .toLowerCase();
+        const module = await import(filePath);
+        handlers[moduleName] = module.default; // Używamy default dla zgodności
+        console.log(`[INFO] Reloaded handler for /${moduleName}`);
+      } catch (err) {
+        console.error(`[ERROR] Failed to reload handler ${filePath}:`, err);
+      }
     }
   });
