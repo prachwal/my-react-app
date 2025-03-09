@@ -6,7 +6,7 @@
   "scripts": {
     "test:server": "pwsh -ExecutionPolicy Bypass -File ./tools/test.ps1",
     "start:server": "node src/server.cjs",
-    "start": "webpack serve --mode development",
+    "start": "webpack serve --config webpack.config.mjs --mode development",
     "build": "cross-env NODE_ENV=production webpack --mode production",
     "clean": "rimraf dist",
     "rebuild": "npm run clean && npm run build",
