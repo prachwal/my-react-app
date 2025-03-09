@@ -13,9 +13,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./certs:/app/certs
-      - ./logs:/app/logs
-      - ./src/handlers:/app/src/handlers
       - ./dist:/app/dist
+      - ./logs:/app/logs
+      - ./src/server/handlers:/app/src/server/handlers
     depends_on:
       - mongo
     entrypoint:

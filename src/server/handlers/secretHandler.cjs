@@ -28,7 +28,7 @@ module.exports = function handleSecretRequest(req, res) {
           req.socket.end();
         } else {
           // Certyfikat dostarczony i ważny
-          respondMessage(res, newCert);
+          respondMessage(req, res);
         }
       },
     );
@@ -37,11 +37,12 @@ module.exports = function handleSecretRequest(req, res) {
     req.socket.end();
   } else {
     // Certyfikat jest obecny i ważny od razu
-    respondMessage(res, clientCert);
+    respondMessage(req, res);
   }
 };
 
-function respondMessage(res, cert) {
+function respondMessage(req, res) {
+  const cert = req.socket.getPeerCertificate();
   res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
   res.end(`Welcome to the secret area! Client: ${cert.subject.CN}`);
 }

@@ -27,7 +27,7 @@ const BASE_URL = isGitHubActions ? "/my-react-app/" : "/";
 console.log(`Tryb: ${mode}, isDev: ${isDev}`);
 
 export default {
-  entry: "./src/index.tsx",
+  entry: "./src/client/index.tsx",
   output: {
     filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),

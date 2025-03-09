@@ -13,6 +13,6 @@
     "rootDir": "./src",
     "sourceMap": true // Kluczowe dla TS/TSX source maps
   },
-  "include": ["src/**/*"],
+  "include": ["src/client/**/*"],
   "exclude": ["node_modules", "dist"]
 }

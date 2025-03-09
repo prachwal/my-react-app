@@ -1,12 +1,12 @@
-import typescriptEslintPlugin from "@typescript-eslint/eslint-plugin";
-import typescriptEslintParser from "@typescript-eslint/parser";
-import reactPlugin from "eslint-plugin-react";
-import reactHooksPlugin from "eslint-plugin-react-hooks";
-import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
-import importPlugin from "eslint-plugin-import";
-import prettierConfig from "eslint-config-prettier";
+const typescriptEslintPlugin = require("@typescript-eslint/eslint-plugin");
+const typescriptEslintParser = require("@typescript-eslint/parser");
+const reactPlugin = require("eslint-plugin-react");
+const reactHooksPlugin = require("eslint-plugin-react-hooks");
+const jsxA11yPlugin = require("eslint-plugin-jsx-a11y");
+const importPlugin = require("eslint-plugin-import");
+const prettierConfig = require("eslint-config-prettier");
 
-export default [
+module.exports = [
   {
     files: ["src/**/*.{ts,tsx}"],
     languageOptions: {
