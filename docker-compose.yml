@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     image: node-server:latest
     container_name: node-container
+    networks:
+      - my-network
     ports:
       - "80:80"
       - "443:443"
@@ -13,27 +15,34 @@ services:
       - ./certs:/app/certs
       - ./logs:/app/logs
       - ./src/handlers:/app/src/handlers
+      - ./dist:/app/dist
     depends_on:
       - mongo
     entrypoint:
-      ["/app/wait-for-it.sh", "mongo:27017", "--", "npm", "run", "start:server"]
+      ["/app/wait-for-it.sh", "mongo", "--", "npm", "run", "start:server"]
     environment:
       - MONGO_URI=mongodb://mongo:27017/appdb
-      - CHOKIDAR_USEPOLLING=true # Opcjonalne dla lepszej obsługi
-      - CHOKIDAR_INTERVAL=100 # Krótszy czas sprawdzania zmian
-      - NODE_OPTIONS=--trace-warnings # Opcjonalne do debugowania
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=100
+      - NODE_OPTIONS=--trace-warnings
 
   mongo:
-    image: mongo:6
+    image: mongo:latest
     container_name: mongo-container
     restart: unless-stopped
+    networks:
+      - my-network
     ports:
       - "27017:27017"
     volumes:
-      - ./mongo_data:/data/db # Mapowanie folderu na hoście
+      - ./mongo_data:/data/db
     environment:
       - MONGO_INITDB_DATABASE=appdb
 
 volumes:
   mongo_data:
-    external: false # Umożliwia używanie lokalnego folderu, a nie tylko wewnętrznego wolumenu
+    external: false
+
+networks:
+  my-network:
+    driver: bridge

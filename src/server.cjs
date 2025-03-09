@@ -5,6 +5,9 @@ const path = require("path");
 const morgan = require("morgan");
 const chokidar = require("chokidar");
 const express = require("express");
+const mongoose = require("mongoose");
+const { fileURLToPath } = require("url");
+const mime = require("mime-types");
 
 const app = express();
 
@@ -18,10 +21,8 @@ const options = {
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "../logs/access.log"),
-  { flags: "a" }
+  { flags: "a" },
 );
-
-const mongoose = require("mongoose");
 
 const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/appdb";
 
@@ -55,25 +56,30 @@ ensureDatabaseExists();
 app.use(
   express.static(path.join(__dirname, "../dist"), {
     index: ["index.html", "index.htm"],
-  })
+    setHeaders: (res, filePath) => {
+      const mimeType = mime.lookup(filePath);
+      if (mimeType) {
+        res.setHeader("Content-Type", mimeType);
+      }
+    },
+  }),
 );
 
 const handlersDir = path.join(__dirname, "handlers");
 let handlers = {};
 
-function loadHandlers() {
+async function loadHandlers() {
   handlers = {};
   try {
     const files = fs.readdirSync(handlersDir);
-    files.forEach((file) => {
+    for (const file of files) {
       if (file.endsWith(".js")) {
         const moduleName = file.replace("Handler.js", "").toLowerCase();
         const fullPath = path.join(handlersDir, file);
-        delete require.cache[require.resolve(fullPath)];
-        handlers[moduleName] = require(fullPath);
+        handlers[moduleName] = await import(fullPath);
         console.log(`[INFO] Loaded handler for /${moduleName}`);
       }
-    });
+    }
   } catch (err) {
     console.error("[ERROR] Error loading handlers:", err);
   }
@@ -121,22 +127,23 @@ httpsServer.listen(HTTPS_PORT, () => {
 
 httpServer.listen(HTTP_PORT, () => {
   console.log(
-    `[INFO] HTTP Server running on port ${HTTP_PORT} (redirecting to HTTPS)`
+    `[INFO] HTTP Server running on port ${HTTP_PORT} (redirecting to HTTPS)`,
   );
 });
 
 // Monitorowanie zmian w folderze handlers
-chokidar.watch(handlersDir, { persistent: true }).on("change", (filePath) => {
-  console.log(`[INFO] Detected change in ${filePath}, reloading handler...`);
-  try {
-    delete require.cache[require.resolve(filePath)];
-    const moduleName = path
-      .basename(filePath, ".js")
-      .replace("Handler", "")
-      .toLowerCase();
-    handlers[moduleName] = require(filePath);
-    console.log(`[INFO] Reloaded handler for /${moduleName}`);
-  } catch (err) {
-    console.error(`[ERROR] Failed to reload handler ${filePath}:`, err);
-  }
-});
+chokidar
+  .watch(handlersDir, { persistent: true })
+  .on("change", async (filePath) => {
+    console.log(`[INFO] Detected change in ${filePath}, reloading handler...`);
+    try {
+      const moduleName = path
+        .basename(filePath, ".js")
+        .replace("Handler", "")
+        .toLowerCase();
+      handlers[moduleName] = await import(filePath);
+      console.log(`[INFO] Reloaded handler for /${moduleName}`);
+    } catch (err) {
+      console.error(`[ERROR] Failed to reload handler ${filePath}:`, err);
+    }
+  });

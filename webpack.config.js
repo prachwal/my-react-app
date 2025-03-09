@@ -21,8 +21,8 @@ const mode =
     : "development");
 const isDev = mode !== "production";
 
-// Określenie prawidłowej publicPath na podstawie środowiska
-const BASE_URL = isDev ? "/" : "/my-react-app/";
+const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
+const BASE_URL = isGitHubActions ? "/my-react-app/" : "/";
 
 console.log(`Tryb: ${mode}, isDev: ${isDev}`);
 
