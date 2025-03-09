@@ -7,6 +7,7 @@ import {
   CredentialResponse,
   googleLogout,
 } from "@react-oauth/google";
+import axios from "axios";
 import { RootState } from "../../store/store";
 import { setLoggedIn } from "../../slices/authSlice";
 import "./style.scss";
@@ -43,7 +44,7 @@ const GoogleLoginComponent: React.FC<{ clientId: string }> = ({ clientId }) => {
     }
   }, [dispatch, isLoggedIn]);
 
-  const handleLoginSuccess = (response: CredentialResponse) => {
+  const handleLoginSuccess = async (response: CredentialResponse) => {
     console.log("Login Success:", response);
     if (response.credential) {
       const token = response.credential;
@@ -51,15 +52,26 @@ const GoogleLoginComponent: React.FC<{ clientId: string }> = ({ clientId }) => {
       const userData = TokenManager.verifyToken(token) as {
         name?: string;
         email?: string;
+        sub?: string; // Google ID
       };
       if (userData) {
-        dispatch(
-          setLoggedIn({
-            isLoggedIn: true,
-            user: userData.name ?? userData.email ?? null,
-          }),
-        );
-        setError(null);
+        try {
+          await axios.post("/api/auth", {
+            googleId: userData.sub,
+            name: userData.name,
+            email: userData.email,
+          });
+          dispatch(
+            setLoggedIn({
+              isLoggedIn: true,
+              user: userData.name ?? userData.email ?? null,
+            }),
+          );
+          setError(null);
+        } catch (error) {
+          console.error("Error saving user:", error);
+          setError(t("Error"));
+        }
       } else {
         setError(t("TokenExpired"));
         dispatch(setLoggedIn({ isLoggedIn: false, user: null }));

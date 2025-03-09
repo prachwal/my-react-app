@@ -9,6 +9,7 @@ import ErrorBoundary from "../components/ErrorBoundary"; // Nowy komponent do ob
 import { RootState } from "../store/store";
 import { setDays } from "../slices/daysSlice"; // Nowy slice dla dni
 import GoogleLoginComponent from "../components/GoogleLoginComponent"; // Import nowego komponentu
+import ExampleData from "../components/ExampleData"; // Import nowego komponentu
 import "./App.scss";
 
 /**
@@ -44,6 +45,7 @@ const App: React.FC = () => {
         <div className="nbp-table-row">
           <NbpTable days={days} />
         </div>
+        <ExampleData />
       </div>
     </ErrorBoundary>
   );

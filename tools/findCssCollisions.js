@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import CssAnalyzer from "../src/utils/cssAnalyzer.js";
+import CssAnalyzer from "./cssAnalyzer.js";
 
 // Uzyskanie ścieżki do bieżącego pliku w środowisku ESM
 const __filename = fileURLToPath(import.meta.url);
