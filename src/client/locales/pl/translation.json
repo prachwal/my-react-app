@@ -19,5 +19,7 @@
     "My React App": "Moja aplikacja React",
     "Mid": "Średni kurs",
     "Title": "Mój Tytuł",
-    "Description": "To jest moja strona"
+    "Description": "To jest moja strona",
+    "Filter currencies": "Filtruj waluty",
+    "Enter currency name or code": "Wprowadź nazwę lub kod waluty"
 }

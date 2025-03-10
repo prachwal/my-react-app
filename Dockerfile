@@ -17,6 +17,12 @@ RUN npm install
 # Kopiowanie pliku server.cjs z folderu src/server
 COPY src/server/server.cjs src/server/server.cjs
 
+# Kopiowanie folderu models z src/server
+COPY src/server/models src/server/models
+
+# Kopiowanie folderu scripts z src/server
+COPY src/server/scripts src/server/scripts
+
 # Kopiowanie skryptu wait-for-it.sh
 COPY ./wait-for-it.sh ./wait-for-it.sh
 RUN chmod +x ./wait-for-it.sh

@@ -19,5 +19,7 @@
     "My React App": "My React App",
     "Mid": "Mid",
     "Title": "My Title",
-    "Description": "This is my page"
+    "Description": "This is my page",
+    "Filter currencies": "Filter currencies",
+    "Enter currency name or code": "Enter currency name or code"
 }

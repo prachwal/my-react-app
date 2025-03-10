@@ -7,6 +7,7 @@ const chokidar = require("chokidar");
 const express = require("express");
 const mongoose = require("mongoose");
 const mime = require("mime-types");
+const { exec } = require("child_process");
 
 const app = express();
 
@@ -116,6 +117,10 @@ app.use((req, res, next) => {
   }
 });
 
+const translationHandler = require("./handlers/translationHandler.cjs");
+
+app.get("/api/translations/:language", translationHandler);
+
 const httpsServer = https.createServer(options, app);
 const httpServer = http.createServer((req, res) => {
   const host = req.headers.host || "localhost";
@@ -135,6 +140,20 @@ httpServer.listen(HTTP_PORT, () => {
     `[INFO] HTTP Server running on port ${HTTP_PORT} (redirecting to HTTPS)`,
   );
 });
+
+// Uruchom skrypt importowania tłumaczeń
+exec(
+  "node ./src/server/scripts/importTranslations.cjs",
+  (err, stdout, stderr) => {
+    if (err) {
+      console.error("[ERROR] Błąd podczas importowania tłumaczeń:", err);
+      return;
+    }
+    console.log("[INFO] Import tłumaczeń zakończony");
+    console.log(stdout);
+    console.error(stderr);
+  },
+);
 
 chokidar
   .watch(handlersDir, { persistent: true })
