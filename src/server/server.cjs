@@ -76,9 +76,8 @@ app.param("language", (req, res, next, language) => {
 });
 
 // Handler for translations
-const Translation = require("./models/Translation.cjs");
-
 app.get("/api/translations/:language", async (req, res) => {
+  const Translation = require("./models/Translation.cjs");
   const { language } = req.params;
 
   try {
@@ -95,15 +94,27 @@ app.get("/api/translations/:language", async (req, res) => {
   }
 });
 
-// Handler for example
-const ExampleSchema = new mongoose.Schema(
-  { name: String },
-  { collection: "examples" },
-);
-const ExampleModel =
-  mongoose.models.examples || mongoose.model("examples", ExampleSchema);
+// Handler for available languages
+app.get("/api/translations/languages", async (req, res) => {
+  const Translation = require("./models/Translation.cjs");
+  try {
+    const languages = await Translation.distinct("language");
+    res.json(languages);
+  } catch (err) {
+    console.error("[ERROR] Błąd podczas pobierania dostępnych języków:", err);
+    res.status(500).json({ error: "Failed to fetch available languages" });
+  }
+});
 
+// Handler for example
 app.get("/api/example", async (req, res) => {
+  const ExampleSchema = new mongoose.Schema(
+    { name: String },
+    { collection: "examples" },
+  );
+  const ExampleModel =
+    mongoose.models.examples || mongoose.model("examples", ExampleSchema);
+
   console.log("[DEBUG] Otrzymano zapytanie:", req.method, req.url);
 
   try {
@@ -132,18 +143,19 @@ app.get("/api/data", (req, res) => {
 });
 
 // Handler for auth
-const UserSchema = new mongoose.Schema(
-  {
-    googleId: { type: String, required: true, unique: true },
-    name: String,
-    email: String,
-  },
-  { collection: "users" },
-);
-
-const UserModel = mongoose.models.users || mongoose.model("users", UserSchema);
-
 app.post("/api/auth", async (req, res) => {
+  const UserSchema = new mongoose.Schema(
+    {
+      googleId: { type: String, required: true, unique: true },
+      name: String,
+      email: String,
+    },
+    { collection: "users" },
+  );
+
+  const UserModel =
+    mongoose.models.users || mongoose.model("users", UserSchema);
+
   const { googleId, name, email } = req.body;
 
   try {

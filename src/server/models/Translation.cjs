@@ -6,6 +6,6 @@ const TranslationSchema = new mongoose.Schema({
   value: { type: String, required: true },
 });
 
-const Translation = mongoose.model("Translation", TranslationSchema);
+const Translation = mongoose.model("translations", TranslationSchema);
 
 module.exports = Translation;

@@ -7,9 +7,13 @@ import "./style.scss";
 const LanguageSwitcher: React.FC = () => {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
-  const { language, availableLanguages } = useAppSelector(
-    (state) => state.language,
-  );
+  const {
+    language,
+    availableLanguages,
+  }: {
+    language: string;
+    availableLanguages: { code: string; name: string }[];
+  } = useAppSelector((state) => state.language);
 
   useEffect(() => {
     if (language && language !== i18n.language) {
@@ -35,7 +39,7 @@ const LanguageSwitcher: React.FC = () => {
       >
         {availableLanguages.map((lng) => (
           <option key={lng.code} value={lng.code}>
-            {lng.name}
+            {lng.name || lng.code}
           </option>
         ))}
       </select>
