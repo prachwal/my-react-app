@@ -11,7 +11,7 @@ const initialState = {
   availableLanguages: [],
 };
 
-const fetchTranslations = async (language: string) => {
+export const fetchTranslations = async (language: string) => {
   try {
     const response = await axios.get(`/api/translations/${language}`);
     return response.data as string[];
@@ -57,16 +57,14 @@ export const initializeLanguages = () => async (dispatch: AppDispatch) => {
   const languages: { code: string; name: string }[] =
     await fetchAvailableLanguages();
   dispatch(setAvailableLanguages(languages));
-  for (const languageObj of languages) {
-    const translations = await fetchTranslations(languageObj.code);
-    i18n.addResourceBundle(
-      languageObj.code,
-      "translation",
-      translations,
-      true,
-      true,
-    );
-  }
 };
+
+export const fetchAndSetTranslations =
+  (language: string) => async (dispatch: AppDispatch) => {
+    const translations = await fetchTranslations(language);
+    i18n.addResourceBundle(language, "translation", translations, true, true);
+    dispatch(changeLanguage(language));
+    i18n.changeLanguage(language);
+  };
 
 export default languageSlice.reducer;

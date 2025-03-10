@@ -92,13 +92,13 @@ const NbpTable: React.FC<NbpTableProps> = ({ days }) => {
               <TabPanel>
                 <HistoricalRatesChart
                   currencyCode={selectedCurrency}
-                  days={days}
+                  days={days} // Pass days to HistoricalRatesChart
                 />
               </TabPanel>
               <TabPanel>
                 <HistoricalRatesTable
                   currencyCode={selectedCurrency}
-                  days={days}
+                  days={days} // Pass days to HistoricalRatesTable
                 />
               </TabPanel>
             </Tabs>

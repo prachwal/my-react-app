@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { changeLanguage } from "../../slices/languageSlice";
+import { fetchAndSetTranslations } from "../../slices/languageSlice"; // Import fetchTranslations
 import "./style.scss";
 
 const LanguageSwitcher: React.FC = () => {
@@ -21,12 +21,11 @@ const LanguageSwitcher: React.FC = () => {
     }
   }, [language, i18n]);
 
-  const handleChangeLanguage = (
+  const handleChangeLanguage = async (
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const newLanguage = event.target.value;
-    dispatch(changeLanguage(newLanguage));
-    i18n.changeLanguage(newLanguage);
+    dispatch(fetchAndSetTranslations(newLanguage));
   };
 
   return (
