@@ -1,5 +1,5 @@
 {
-  "Select a currency to see historical data": "Wählen Sie eine Währung, um historische Daten anzuzeigen",
+  "Select a currency to see historical data": "Wählen Sie eine Währung, um historische Daten zu sehen.",
   "Loading": "Laden",
   "Chart": "Diagramm",
   "Table": "Tabelle",
@@ -20,6 +20,6 @@
   "Mid": "Mitte",
   "Title": "Mein Titel",
   "Description": "Das ist meine Seite",
-  "Filter currencies": "\"Filter Währungen\"",
+  "Filter currencies": "Währungen filtern",
   "Enter currency name or code": "\"Geben Sie den Währungsnamen oder -code ein\""
 }

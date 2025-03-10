@@ -2,35 +2,123 @@ const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
 const axios = require("axios");
-const Translation = require("../models/Translation.cjs");
+const chalk = require("chalk");
+
+let Translation;
+try {
+  Translation = require("../models/Translation.cjs");
+} catch (error) {
+  console.error(
+    chalk.red("[ERROR] Nie udało się zaimportować modelu Translation:"),
+    chalk.white.bgBlack(error.message),
+  );
+  process.exit(1);
+}
 
 const localesDir = path.join(__dirname, "../../../src/client/locales");
 const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/appdb";
 const openAiApiKey = process.env.OPENAI_API_KEY;
 const referenceLanguage = "en";
 
-// UWAGA! Po każdej zmianie parametrów należy zaktualizować funkcję showHelp()
+const configPath = process.argv[2] || "./config.json";
+let config = {
+  model: "gpt-3.5-turbo",
+  maxTokens: 60,
+  apiUrl: "https://api.openai.com/v1/chat/completions",
+};
+if (fs.existsSync(configPath)) {
+  try {
+    config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    console.log(
+      chalk.green("[INFO] Wczytano konfigurację z pliku:"),
+      chalk.white.bgBlack(configPath),
+    );
+  } catch (error) {
+    console.error(
+      chalk.red("[ERROR] Błąd przy wczytywaniu konfiguracji:"),
+      chalk.white.bgBlack(error.message),
+    );
+  }
+}
+
 const args = process.argv.slice(2);
 const DEBUG = args.includes("--debug");
+const TRACE = args.includes("--trace");
 const showHelpFlag = args.includes("--help");
 const importOnly = args.includes("--import-only");
 const verifyTranslations = args.includes("--verify");
 const fixTranslations = args.includes("--fix");
+
+const languagesArg = args.find((arg) => arg.startsWith("--languages="));
+const selectedLanguages = languagesArg
+  ? languagesArg
+      .split("=")[1]
+      .split(",")
+      .map((lang) => lang.trim())
+  : null;
+
+const keyArg = args.find((arg) => arg.startsWith("--key="));
+const selectedKey = keyArg ? keyArg.split("=")[1].trim() : null;
 
 if (showHelpFlag) {
   showHelp();
   process.exit(0);
 }
 
+function logInfo(...messages) {
+  const formattedMessages = messages.map((msg) =>
+    typeof msg === "string" && msg.includes("'")
+      ? chalk.white.bgBlack(msg)
+      : msg,
+  );
+  console.log(chalk.green("[INFO]"), ...formattedMessages);
+}
+
+function logWarn(...messages) {
+  const formattedMessages = messages.map((msg) =>
+    typeof msg === "string" && msg.includes("'")
+      ? chalk.white.bgBlack(msg)
+      : msg,
+  );
+  console.log(chalk.yellow("[WARN]"), ...formattedMessages);
+}
+
+function logError(...messages) {
+  const formattedMessages = messages.map((msg) =>
+    typeof msg === "string" && msg.includes("'")
+      ? chalk.white.bgBlack(msg)
+      : msg,
+  );
+  console.error(chalk.red("[ERROR]"), ...formattedMessages);
+}
+
 function logDebug(...messages) {
-  if (DEBUG) console.log("[DEBUG]", ...messages);
+  if (DEBUG || TRACE) {
+    const formattedMessages = messages.map((msg) =>
+      typeof msg === "string" && msg.includes("'")
+        ? chalk.white.bgBlack(msg)
+        : msg,
+    );
+    console.log(chalk.cyan("[DEBUG]"), ...formattedMessages);
+  }
+}
+
+function logTrace(...messages) {
+  if (TRACE) {
+    const formattedMessages = messages.map((msg) =>
+      typeof msg === "string" && msg.includes("'")
+        ? chalk.white.bgBlack(msg)
+        : msg,
+    );
+    console.log(chalk.magenta("[TRACE]"), ...formattedMessages);
+  }
 }
 
 async function main() {
   try {
     logDebug("Uruchamianie skryptu...");
     await mongoose.connect(mongoUri);
-    console.log("[INFO] Połączono z MongoDB");
+    logInfo("Połączono z MongoDB");
 
     if (!fs.existsSync(localesDir)) {
       throw new Error(`Katalog ${localesDir} nie istnieje`);
@@ -43,8 +131,8 @@ async function main() {
 
       if (verifyTranslations || fixTranslations) {
         if (!openAiApiKey) {
-          console.error(
-            "[ERROR] Brak klucza API OpenAI. Weryfikacja i naprawa tłumaczeń niemożliwa.",
+          logError(
+            "Brak klucza API OpenAI. Weryfikacja i naprawa tłumaczeń niemożliwa.",
           );
           process.exit(1);
         }
@@ -52,17 +140,17 @@ async function main() {
       }
     }
 
-    console.log("[INFO] Proces zakończony");
+    logInfo("Proces zakończony");
   } catch (err) {
-    console.error("[ERROR]", err.message);
+    logError(err.message);
   } finally {
     await mongoose.disconnect();
+    logInfo("Rozłączono z MongoDB");
   }
 }
 
 async function importTranslations(overwrite = false) {
   logDebug("Rozpoczynanie importu tłumaczeń...");
-
   const languages = fs.readdirSync(localesDir);
 
   for (const language of languages) {
@@ -85,45 +173,72 @@ async function importTranslations(overwrite = false) {
         ),
       );
 
-      console.log(`[INFO] Importowane tłumaczenia: ${language} → ${file}`);
+      logInfo(
+        `Importowane tłumaczenia: ${chalk.white.bgBlack(
+          language,
+        )} → ${chalk.white.bgBlack(file)}`,
+      );
     }
   }
 }
 
 async function checkMissingTranslations() {
   logDebug("Sprawdzanie brakujących tłumaczeń...");
-  const languages = fs.readdirSync(localesDir);
+  const allLanguages = fs.readdirSync(localesDir);
+  const languagesToCheck = selectedLanguages
+    ? allLanguages.filter(
+        (lang) =>
+          selectedLanguages.includes(lang) && lang !== referenceLanguage,
+      )
+    : allLanguages.filter((lang) => lang !== referenceLanguage);
+
+  if (languagesToCheck.length === 0) {
+    logWarn("Nie znaleziono podanych języków do sprawdzenia.");
+    return;
+  }
+
   const referenceTranslations = loadTranslations(referenceLanguage);
 
-  for (const language of languages.filter(
-    (lang) => lang !== referenceLanguage,
-  )) {
+  for (const language of languagesToCheck) {
     const translations = loadTranslations(language);
     const missingKeys = Object.keys(referenceTranslations).filter(
       (key) => !translations.hasOwnProperty(key),
     );
 
-    console.log(
-      missingKeys.length
-        ? `[WARN] Brakujące tłumaczenia dla ${language}: ${missingKeys}`
-        : `[INFO] Wszystkie tłumaczenia są obecne dla ${language}`,
-    );
+    if (missingKeys.length) {
+      logWarn(
+        `Brakujące tłumaczenia dla ${chalk.white.bgBlack(language)}:`,
+        missingKeys,
+      );
+    } else {
+      logInfo(
+        `Wszystkie tłumaczenia są obecne dla ${chalk.white.bgBlack(language)}`,
+      );
+    }
   }
 }
 
 async function verifyAndFixTranslations(fix = false) {
-  console.log(
-    `[INFO] Rozpoczynanie ${fix ? "naprawy" : "weryfikacji"} tłumaczeń...`,
-  );
+  logInfo(`Rozpoczynanie ${fix ? "naprawy" : "weryfikacji"} tłumaczeń...`);
   logDebug("Pobieranie listy języków...");
 
-  const languages = fs.readdirSync(localesDir);
+  const allLanguages = fs.readdirSync(localesDir);
+  const languagesToProcess = selectedLanguages
+    ? allLanguages.filter(
+        (lang) =>
+          selectedLanguages.includes(lang) && lang !== referenceLanguage,
+      )
+    : allLanguages.filter((lang) => lang !== referenceLanguage);
+
+  if (languagesToProcess.length === 0) {
+    logWarn("Nie znaleziono podanych języków do weryfikacji/naprawy.");
+    return;
+  }
+
   const referenceTranslations = loadTranslations(referenceLanguage);
 
-  for (const language of languages.filter(
-    (lang) => lang !== referenceLanguage,
-  )) {
-    logDebug(`Przetwarzanie języka: ${language}`);
+  for (const language of languagesToProcess) {
+    logDebug(`Przetwarzanie języka: ${chalk.white.bgBlack(language)}`);
 
     const translationsPath = path.join(
       localesDir,
@@ -133,10 +248,28 @@ async function verifyAndFixTranslations(fix = false) {
     const translations = loadTranslations(language);
     const problematicKeys = [];
 
-    for (const [key, value] of Object.entries(translations)) {
+    const keysToCheck = selectedKey
+      ? [selectedKey].filter((key) => translations.hasOwnProperty(key))
+      : Object.keys(translations);
+
+    if (selectedKey && keysToCheck.length === 0) {
+      logWarn(
+        `Klucz '${chalk.white.bgBlack(
+          selectedKey,
+        )}' nie istnieje w tłumaczeniach dla ${chalk.white.bgBlack(language)}.`,
+      );
+      continue;
+    }
+
+    for (const key of keysToCheck) {
+      logDebug(
+        `Przetwarzanie klucza: ${chalk.white.bgBlack(
+          key,
+        )} w języku: ${chalk.white.bgBlack(language)}`,
+      );
       const isValid = await validateTranslation(
         referenceTranslations[key],
-        value,
+        translations[key],
         language,
       );
       if (!isValid) {
@@ -145,22 +278,33 @@ async function verifyAndFixTranslations(fix = false) {
     }
 
     if (problematicKeys.length > 0) {
-      console.log(
-        `[WARN] Podejrzane tłumaczenia dla ${language}:`,
+      logWarn(
+        `Podejrzane tłumaczenia dla ${chalk.white.bgBlack(language)}:`,
         problematicKeys,
       );
 
       if (fix) {
-        console.log(`[INFO] Naprawianie tłumaczeń dla ${language}...`);
+        logInfo(
+          `Naprawianie tłumaczeń dla ${chalk.white.bgBlack(language)}...`,
+        );
         for (const key of problematicKeys) {
+          logDebug(
+            `Naprawa klucza: ${chalk.white.bgBlack(
+              key,
+            )} w języku: ${chalk.white.bgBlack(language)}`,
+          );
           translations[key] = await translateText(
             referenceTranslations[key],
             language,
           );
         }
         saveTranslations(translationsPath, translations);
-        console.log(`[INFO] Poprawiono tłumaczenia dla ${language}`);
+        logInfo(`Poprawiono tłumaczenia dla ${chalk.white.bgBlack(language)}`);
       }
+    } else {
+      logInfo(
+        `Brak problematycznych tłumaczeń dla ${chalk.white.bgBlack(language)}`,
+      );
     }
   }
 }
@@ -168,61 +312,74 @@ async function verifyAndFixTranslations(fix = false) {
 async function validateTranslation(original, translation, targetLanguage) {
   try {
     logDebug(
-      `Weryfikacja tłumaczenia dla ${targetLanguage}: ${original} -> ${translation}`,
+      `Weryfikacja tłumaczenia: klucz='${chalk.white.bgBlack(
+        original,
+      )}' -> '${chalk.white.bgBlack(
+        translation,
+      )}' dla języka: ${chalk.white.bgBlack(targetLanguage)}`,
     );
 
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a professional translator. Respond with 'VALID' if the translation is correct and 'INVALID' if it is incorrect. No other words.",
-          },
-          {
-            role: "user",
-            content: `Is this a correct translation of '${original}' into ${targetLanguage}? '${translation}'`,
-          },
-        ],
-        max_tokens: 10,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openAiApiKey}`,
-        },
-      },
-    );
+    const response = await apiRequest({
+      model: config.model,
+      prompt: `Verify if '${translation}' is a correct translation of '${original}' into the language with ISO code '${targetLanguage}' for pagination in a web application interface (e.g., "Previous" or "Next" buttons). Respond with "VALID" or "INVALID" only, without periods or additional text.`,
+      maxTokens: 10,
+    });
 
-    return response.data.choices[0].message.content.trim() === "VALID";
+    logDebug(`Wynik walidacji: ${chalk.white.bgBlack(response)}`);
+    return response === "VALID";
   } catch (error) {
-    console.error(
-      "[ERROR] Błąd weryfikacji tłumaczenia:",
-      error.response?.data || error.message,
+    logError(
+      "Błąd weryfikacji tłumaczenia:",
+      chalk.white.bgBlack(error.message),
     );
-    return true;
+    return false;
   }
 }
 
 async function translateText(text, targetLanguage) {
   try {
-    logDebug(`Tłumaczenie tekstu na ${targetLanguage}: ${text}`);
+    logDebug(
+      `Tłumaczenie tekstu: '${chalk.white.bgBlack(
+        text,
+      )}' na język: ${chalk.white.bgBlack(targetLanguage)}`,
+    );
 
+    const translatedText = await apiRequest({
+      model: config.model,
+      prompt: `Translate '${text}' into the language with ISO code '${targetLanguage}' for pagination in a web application interface (e.g., "Previous" as "Vorherige" or "Next" as "Nächste" in German). Provide only the translated text, no additional formatting or periods.`,
+      maxTokens: config.maxTokens,
+    });
+
+    logDebug(`Przetłumaczony tekst: '${chalk.white.bgBlack(translatedText)}'`);
+    return translatedText;
+  } catch (error) {
+    logError("Błąd tłumaczenia:", chalk.white.bgBlack(error.message));
+    return text;
+  }
+}
+
+async function apiRequest({ model, prompt, maxTokens }) {
+  if (TRACE) {
+    logTrace("Wysyłanie żądania API:");
+    logTrace("Model:", chalk.white.bgBlack(model));
+    logTrace("Prompt:", chalk.white.bgBlack(prompt));
+    logTrace("Max tokens:", chalk.white.bgBlack(maxTokens));
+  }
+
+  try {
     const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
+      config.apiUrl,
       {
-        model: "gpt-3.5-turbo",
+        model,
         messages: [
           {
             role: "system",
             content:
               "Return only the translation with no explanation, no quotes, and no formatting.",
           },
-          { role: "user", content: `Translate to ${targetLanguage}: ${text}` },
+          { role: "user", content: prompt },
         ],
-        max_tokens: 60,
+        max_tokens: maxTokens,
       },
       {
         headers: {
@@ -232,13 +389,23 @@ async function translateText(text, targetLanguage) {
       },
     );
 
-    return response.data.choices[0].message.content.trim();
+    if (TRACE) {
+      logTrace("Otrzymano odpowiedź API:");
+      logTrace(chalk.white.bgBlack(JSON.stringify(response.data, null, 2)));
+    }
+
+    const content = response?.data?.choices?.[0]?.message?.content?.trim();
+    if (!content) {
+      throw new Error("Brak zawartości w odpowiedzi API");
+    }
+
+    return content;
   } catch (error) {
-    console.error(
-      "[ERROR] Błąd tłumaczenia:",
-      error.response?.data || error.message,
+    logError(
+      "Błąd zapytania API:",
+      chalk.white.bgBlack(error.response?.data?.error || error.message),
     );
-    return text;
+    throw error;
   }
 }
 
@@ -255,14 +422,31 @@ function saveTranslations(filePath, data) {
 
 function showHelp() {
   console.log(`
-Użycie: node script.js [opcje]
+Użycie: node script.js [opcje] [ścieżka_do_pliku_konfiguracyjnego]
 
 Opcje:
-  --help          Wyświetla ten komunikat
-  --import-only   Importuje tłumaczenia z plików do MongoDB, nadpisując dane
-  --verify        Sprawdza poprawność tłumaczeń za pomocą OpenAI
-  --fix           Sprawdza i naprawia błędne tłumaczenia przy użyciu OpenAI
-  --debug         Wyświetla dodatkowe informacje diagnostyczne
+  ${chalk.green("--help")}                  Wyświetla ten komunikat
+  ${chalk.green(
+    "--import-only",
+  )}           Importuje tłumaczenia z plików do MongoDB, nadpisując dane
+  ${chalk.green(
+    "--verify",
+  )}                Sprawdza poprawność tłumaczeń za pomocą OpenAI
+  ${chalk.green(
+    "--fix",
+  )}                   Sprawdza i naprawia błędne tłumaczenia przy użyciu OpenAI
+  ${chalk.green(
+    "--debug",
+  )}                 Wyświetla informacje o przetwarzanych obiektach
+  ${chalk.green(
+    "--trace",
+  )}                 Włącza szczegółowe śledzenie żądań i odpowiedzi API
+  ${chalk.green(
+    "--languages=lang1,lang2",
+  )} Określa języki do sprawdzenia/naprawy (np. --languages=pl,fr)
+  ${chalk.green(
+    "--key=key",
+  )}               Określa konkretny klucz tłumaczenia do weryfikacji (np. --key=hello)
 
 UWAGA: Aby korzystać z OpenAI, ustaw zmienną środowiskową OPENAI_API_KEY.
 `);
