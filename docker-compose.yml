@@ -15,7 +15,6 @@ services:
       - ./certs:/app/certs
       - ./dist:/app/dist
       - ./logs:/app/logs
-      - ./src/server/handlers:/app/src/server/handlers
       - ./src/client/locales:/app/src/client/locales
     depends_on:
       - mongo

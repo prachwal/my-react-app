@@ -3,7 +3,6 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const morgan = require("morgan");
-const chokidar = require("chokidar");
 const express = require("express");
 const mongoose = require("mongoose");
 const mime = require("mime-types");
@@ -54,37 +53,7 @@ app.use(
   }),
 );
 
-const handlersDir = path.join(__dirname, "handlers");
-let handlers = {};
-
-global.handlerMappings = {
-  // Pamiętaj, aby nie dodawać mapowania auth tutaj, przenieś je do odpowiedniego handlera
-};
-
 app.use(morgan("combined", { stream: accessLogStream }));
-
-async function loadHandlers() {
-  handlers = {};
-  try {
-    const files = fs.readdirSync(handlersDir);
-    for (const file of files) {
-      if (file.endsWith(".cjs")) {
-        const moduleName = file.replace("Handler.cjs", "").toLowerCase();
-        const fullPath = path.join(handlersDir, file);
-        delete require.cache[require.resolve(fullPath)];
-        const module = require(fullPath);
-        const handlerPath =
-          global.handlerMappings[moduleName] || `/${moduleName}`;
-        handlers[handlerPath] = module;
-        console.log(`[INFO] Loaded handler for ${handlerPath}`);
-      }
-    }
-  } catch (err) {
-    console.error("[ERROR] Error loading handlers:", err);
-  }
-}
-
-loadHandlers();
 
 app.use((req, res, next) => {
   console.log(`[REQUEST] ${req.method} ${req.url}`);
@@ -101,25 +70,156 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  const urlPath = req.path.toLowerCase();
-  const handler = handlers[urlPath];
+app.param("language", (req, res, next, language) => {
+  req.language = language;
+  next();
+});
 
-  if (handler) {
-    try {
-      handler(req, res);
-    } catch (err) {
-      res.status(500).send("Internal Server Error");
-      console.error(`[ERROR] Error in handler for ${urlPath}:`, err);
-    }
-  } else {
-    next();
+// Handler for translations
+const Translation = require("./models/Translation.cjs");
+
+app.get("/api/translations/:language", async (req, res) => {
+  const { language } = req.params;
+
+  try {
+    const translations = await Translation.find({ language });
+    const translationMap = translations.reduce((map, translation) => {
+      map[translation.key] = translation.value;
+      return map;
+    }, {});
+
+    res.json(translationMap);
+  } catch (err) {
+    console.error("[ERROR] Błąd podczas pobierania tłumaczeń:", err);
+    res.status(500).json({ error: "Failed to fetch translations" });
   }
 });
 
-const translationHandler = require("./handlers/translationHandler.cjs");
+// Handler for example
+const ExampleSchema = new mongoose.Schema(
+  { name: String },
+  { collection: "examples" },
+);
+const ExampleModel =
+  mongoose.models.examples || mongoose.model("examples", ExampleSchema);
 
-app.get("/api/translations/:language", translationHandler);
+app.get("/api/example", async (req, res) => {
+  console.log("[DEBUG] Otrzymano zapytanie:", req.method, req.url);
+
+  try {
+    await global.mongooseConnection;
+    console.log("[DEBUG] Połączenie z bazą danych gotowe.");
+
+    const data = await ExampleModel.find();
+    console.log(
+      "[DEBUG] Pobranie danych zakończone. Ilość rekordów:",
+      data.length,
+    );
+
+    res.json(data);
+  } catch (err) {
+    console.error("[ERROR] Błąd podczas pobierania danych:", err);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch data", details: err.message });
+  }
+});
+
+// Handler for data
+app.get("/api/data", (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("This is the data resource!");
+});
+
+// Handler for auth
+const UserSchema = new mongoose.Schema(
+  {
+    googleId: { type: String, required: true, unique: true },
+    name: String,
+    email: String,
+  },
+  { collection: "users" },
+);
+
+const UserModel = mongoose.models.users || mongoose.model("users", UserSchema);
+
+app.post("/api/auth", async (req, res) => {
+  const { googleId, name, email } = req.body;
+
+  try {
+    let user = await UserModel.findOne({ googleId });
+
+    if (user) {
+      // Aktualizacja danych użytkownika
+      user.name = name;
+      user.email = email;
+      await user.save();
+    } else {
+      // Rejestracja nowego użytkownika
+      user = new UserModel({ googleId, name, email });
+      await user.save();
+    }
+
+    res.status(200).json({ message: "User saved successfully", user });
+  } catch (error) {
+    console.error("[ERROR] Error saving user:", error);
+    res.status(500).json({ error: "Failed to save user" });
+  }
+});
+
+// Handler for secret
+app.get("/api/secret", (req, res) => {
+  const clientCert = req.socket.getPeerCertificate();
+
+  const respondMessage = (req, res) => {
+    const cert = req.socket.getPeerCertificate();
+    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end(`Welcome to the secret area! Client: ${cert.subject.CN}`);
+  };
+
+  // Jeśli certyfikat nie został dostarczony lub jest pusty
+  if (!clientCert || Object.keys(clientCert).length === 0) {
+    // Ponownie negocjujemy TLS, żądając certyfikatu
+    req.socket.renegotiate(
+      {
+        requestCert: true,
+        rejectUnauthorized: true, // Odrzucamy, jeśli certyfikat nie jest ważny
+      },
+      (err) => {
+        if (err) {
+          console.error("[ERROR] Renegotiation failed:", err);
+          req.socket.end(); // Zamykamy połączenie w przypadku błędu
+          return;
+        }
+
+        const newCert = req.socket.getPeerCertificate();
+        if (
+          !newCert ||
+          Object.keys(newCert).length === 0 ||
+          !req.client.authorized
+        ) {
+          // Jeśli nadal brak ważnego certyfikatu, zamykamy połączenie
+          req.socket.end();
+        } else {
+          // Certyfikat dostarczony i ważny
+          respondMessage(req, res);
+        }
+      },
+    );
+  } else if (!req.client.authorized) {
+    // Jeśli certyfikat jest obecny, ale nieważny, zamykamy połączenie
+    req.socket.end();
+  } else {
+    // Certyfikat jest obecny i ważny od razu
+    respondMessage(req, res);
+  }
+});
+
+// Handler for user
+app.get("/api/user", (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("This is the user resource!");
+});
 
 const httpsServer = https.createServer(options, app);
 const httpServer = http.createServer((req, res) => {
@@ -154,27 +254,3 @@ exec(
     console.error(stderr);
   },
 );
-
-chokidar
-  .watch(handlersDir, { persistent: true })
-  .on("change", async (filePath) => {
-    if (filePath.endsWith(".cjs")) {
-      console.log(
-        `[INFO] Detected change in ${filePath}, reloading handler...`,
-      );
-      try {
-        delete require.cache[require.resolve(filePath)];
-        const module = require(filePath);
-        const moduleName = path
-          .basename(filePath, ".cjs")
-          .replace("Handler", "")
-          .toLowerCase();
-        const handlerPath =
-          global.handlerMappings[moduleName] || `/${moduleName}`;
-        handlers[handlerPath] = module;
-        console.log(`[INFO] Reloaded handler for ${handlerPath}`);
-      } catch (err) {
-        console.error(`[ERROR] Failed to reload handler ${filePath}:`, err);
-      }
-    }
-  });
