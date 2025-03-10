@@ -70,6 +70,22 @@ app.use((req, res, next) => {
   next();
 });
 
+// Handler for available languages
+app.get("/api/translations/languages", async (req, res) => {
+  const Translation = require("./models/Translation.cjs");
+  try {
+    const languages = await Translation.distinct("language");
+    const languageObjects = languages.map((language) => ({
+      code: language,
+      name: language,
+    }));
+    res.json(languageObjects);
+  } catch (err) {
+    console.error("[ERROR] Błąd podczas pobierania dostępnych języków:", err);
+    res.status(500).json({ error: "Failed to fetch available languages" });
+  }
+});
+
 app.param("language", (req, res, next, language) => {
   req.language = language;
   next();
@@ -91,18 +107,6 @@ app.get("/api/translations/:language", async (req, res) => {
   } catch (err) {
     console.error("[ERROR] Błąd podczas pobierania tłumaczeń:", err);
     res.status(500).json({ error: "Failed to fetch translations" });
-  }
-});
-
-// Handler for available languages
-app.get("/api/translations/languages", async (req, res) => {
-  const Translation = require("./models/Translation.cjs");
-  try {
-    const languages = await Translation.distinct("language");
-    res.json(languages);
-  } catch (err) {
-    console.error("[ERROR] Błąd podczas pobierania dostępnych języków:", err);
-    res.status(500).json({ error: "Failed to fetch available languages" });
   }
 });
 

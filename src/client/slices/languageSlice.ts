@@ -24,10 +24,12 @@ const fetchTranslations = async (language: string) => {
   }
 };
 
-const fetchAvailableLanguages = async (): Promise<string[]> => {
+const fetchAvailableLanguages = async (): Promise<
+  { code: string; name: string }[]
+> => {
   try {
     const response = await axios.get("/api/translations/languages");
-    return response.data as string[];
+    return response.data as { code: string; name: string }[];
   } catch (error) {
     console.error("[ERROR] Błąd podczas pobierania dostępnych języków:", error);
     return [];
@@ -52,11 +54,18 @@ const languageSlice = createSlice({
 export const { changeLanguage, setAvailableLanguages } = languageSlice.actions;
 
 export const initializeLanguages = () => async (dispatch: AppDispatch) => {
-  const languages: string[] = await fetchAvailableLanguages();
+  const languages: { code: string; name: string }[] =
+    await fetchAvailableLanguages();
   dispatch(setAvailableLanguages(languages));
-  for (const language of languages) {
-    const translations = await fetchTranslations(language);
-    i18n.addResourceBundle(language, "translation", translations, true, true);
+  for (const languageObj of languages) {
+    const translations = await fetchTranslations(languageObj.code);
+    i18n.addResourceBundle(
+      languageObj.code,
+      "translation",
+      translations,
+      true,
+      true,
+    );
   }
 };
 

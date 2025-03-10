@@ -7,7 +7,6 @@ import { HelmetProvider, Helmet } from "react-helmet-async"; // Importujemy Helm
 import "./utils/i18nNew"; // Importujemy konfigurację i18n
 import { useTranslation } from "react-i18next"; // Importujemy hook useTranslation
 import { initializeLanguages } from "./slices/languageSlice"; // Importujemy akcję initializeLanguages
-import LanguageSelector from "./components/LanguageSelector"; // Importujemy komponent LanguageSelector
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
@@ -28,7 +27,6 @@ const RootComponent = () => {
             <html lang={i18n.language} />
           </Helmet>
           <App />
-          <LanguageSelector />
         </HelmetProvider>
       </Provider>
     </React.StrictMode>
